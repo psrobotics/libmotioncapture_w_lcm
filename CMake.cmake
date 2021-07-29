@@ -1,14 +1,18 @@
 cmake_minimum_required(VERSION 3.5)
 project(libmotioncapture)
 
-set(ENABLE_QUALISYS True CACHE STRING "Enable Qualisys")
-set(ENABLE_OPTITRACK True CACHE STRING "Enable Optitrack")
-set(ENABLE_VICON True CACHE STRING "Enable Vicon")
-set(ENABLE_PHASESPACE False CACHE STRING "Enable Phasespace")
-set(ENABLE_VRPN False CACHE STRING "Enable VRPN")
+# define some options
+option(BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
+option(ENABLE_QUALISYS "Enable Qualisys" ON)
+option(ENABLE_OPTITRACK "Enable Optitrack" ON)
+option(ENABLE_VICON "Enable Vicon" ON)
+option(ENABLE_PHASESPACE "Generate Python Bindings" OFF)
+option(ENABLE_VRPN "Enable VRPN" OFF)
 
-set (CMAKE_CXX_STANDARD 11)
-set (CMAKE_CXX_STANDARD_REQUIRED ON)
+# Enable C++14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(PCL REQUIRED)
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vicon-datastream-sdk/)
@@ -131,4 +135,21 @@ add_library(libmotioncapture
 target_link_libraries(libmotioncapture
   ${my_libraries}
 )
+set_property(TARGET libmotioncapture PROPERTY POSITION_INDEPENDENT_CODE ON)
 set(LIBMOTIONCAPTURE_LINK_DIR ${my_link_directories} CACHE STRING "link directories for libmotioncapture")
+
+if (BUILD_PYTHON_BINDINGS)
+  # Python bindings
+  # add_subdirectory(pybind11)
+  find_package(Python COMPONENTS Interpreter Development)
+  find_package(pybind11 CONFIG)
+
+  pybind11_add_module(motioncapture
+    src/python_bindings.cpp
+  )
+
+  target_link_libraries(motioncapture
+    PRIVATE
+      libmotioncapture
+  )
+endif()
