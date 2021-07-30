@@ -2,17 +2,13 @@
 
 namespace libmotioncapture {
 
-  void MotionCapture::getObjectByName(
-      const std::string& name,
-      Object& result) const
+  const Object& MotionCapture::objectByName(
+      const std::string& name) const
   {
-    std::vector<Object> objects;
-    getObjects(objects);
-    for(const auto& object : objects) {
-      if (object.name() == name) {
-        result = object;
-        return;
-      }
+    const auto& obj = objects();
+    const auto iter = obj.find(name);
+    if (iter != obj.end()) {
+      return iter->second;
     }
     throw std::runtime_error("Object not found!");
   }

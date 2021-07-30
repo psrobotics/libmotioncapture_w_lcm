@@ -4,8 +4,11 @@
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 #include <pybind11/numpy.h>
+#include <pybind11/eigen.h>
 
 #include "libmotioncapture/motioncapture.h"
+#include "libmotioncapture/testmocap.h"
+#include "libmotioncapture/optitrack.h"
 
 using namespace libmotioncapture;
 
@@ -26,6 +29,13 @@ PYBIND11_MODULE(motioncapture, m) {
 
   // m.attr("__version__") = version();
 
+  // Quaternions
+  py::class_<Eigen::Quaternionf>(m, "Quaternion")
+      .def_property_readonly("x", py::overload_cast<>(&Eigen::Quaternionf::x, py::const_))
+      .def_property_readonly("y", py::overload_cast<>(&Eigen::Quaternionf::y, py::const_))
+      .def_property_readonly("z", py::overload_cast<>(&Eigen::Quaternionf::z, py::const_))
+      .def_property_readonly("w", py::overload_cast<>(&Eigen::Quaternionf::w, py::const_));
+
   // Object
   py::class_<Object>(m, "Object")
       .def_property_readonly("name", &Object::name)
@@ -33,9 +43,16 @@ PYBIND11_MODULE(motioncapture, m) {
       .def_property_readonly("rotation", &Object::rotation)
       .def_property_readonly("occluded", &Object::occluded);
 
+  py::class_<MotionCaptureTest>(m, "MotionCaptureTest")
+      .def(py::init<float, const std::vector<Object>&>())//, const pcl::PointCloud<pcl::PointXYZ>::Ptr>())
+      .def("waitForNextFrame", &MotionCaptureTest::waitForNextFrame, py::call_guard<py::gil_scoped_release>())
+      .def_property_readonly("objects", &MotionCaptureTest::objects);
+
   //
-  py::class_<MotionCapture>(m, "MotionCapture")
-      .def("waitForNextFrame", &MotionCapture::waitForNextFrame, py::call_guard<py::gil_scoped_release>());
+  py::class_<MotionCaptureOptitrack>(m, "MotionCaptureOptitrack")
+      .def(py::init<const std::string &>())
+      .def("waitForNextFrame", &MotionCaptureOptitrack::waitForNextFrame, py::call_guard<py::gil_scoped_release>())
+      .def_property_readonly("objects", &MotionCaptureOptitrack::objects);
 
   // // Packet
   // py::class_<Packet>(m, "Packet", py::buffer_protocol())

@@ -20,16 +20,11 @@ namespace libmotioncapture {
     const std::string& version() const;
 
     // implementations for MotionCapture interface
-    virtual void waitForNextFrame();
-    virtual void getObjects(std::vector<Object>& result) const;
-    virtual void getObjectByName(
-      const std::string& name,
-      Object& result) const;
-    virtual void getPointCloud(
-      pcl::PointCloud<pcl::PointXYZ>::Ptr result) const;
-    virtual void getLatency(
-      std::vector<LatencyInfo>& result) const;
-    virtual uint64_t getTimeStamp() const;
+    virtual const std::map<std::string, Object>& objects() const;
+    virtual const Object& objectByName(const std::string& name) const;
+    virtual const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud() const;
+    virtual const std::vector<LatencyInfo>& latency() const;
+    virtual uint64_t timeStamp() const;
 
     virtual bool supportsObjectTracking() const;
     virtual bool supportsLatencyEstimate() const;

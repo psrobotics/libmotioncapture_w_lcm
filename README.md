@@ -16,3 +16,28 @@ Support for following hardware requires additional action by the user:
 - Phasespace - manually obtain SDK and copy to `externalDependencies/phasespace_sdk/`.
 
 After setup, enable the appropriate compile flags in `CMakeLists.txt`.
+
+## Prerequisites
+
+```
+sudo apt install python3-pybind11 ninja-build
+```
+
+## Python
+
+```
+git submodule init
+git submodule update
+python3 setup.py develop --user
+python3 examples/python.py
+```
+
+## C++
+
+```
+git submodule init
+git submodule update
+mkdir build
+cd build
+cmake ..
+```

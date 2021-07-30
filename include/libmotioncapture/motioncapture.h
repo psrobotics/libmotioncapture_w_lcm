@@ -3,6 +3,10 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <map>
+
+// Eigen
+#include <Eigen/Geometry> 
 
 // PCL
 #include <pcl/point_cloud.h>
@@ -100,23 +104,20 @@ namespace libmotioncapture {
     // Query data
 
     // returns reference to objects available in the current frame
-    virtual void getObjects(std::vector<Object>& result) const = 0;
+    virtual const std::map<std::string, Object>& objects() const = 0;
 
     // returns an object with a specified name
-    virtual void getObjectByName(
-      const std::string& name,
-      Object& result) const;
+    virtual const Object& objectByName(
+      const std::string& name) const;
 
     // returns pointer to point cloud (all unlabled markers)
-    virtual void getPointCloud(
-      pcl::PointCloud<pcl::PointXYZ>::Ptr result) const = 0;
+    virtual const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud() const = 0;
 
     // return latency information
-    virtual void getLatency(
-      std::vector<LatencyInfo>& result) const = 0;
+    virtual const std::vector<LatencyInfo>& latency() const = 0;
 
     // returns timestamp in microseconds
-    virtual uint64_t getTimeStamp() const = 0;
+    virtual uint64_t timeStamp() const = 0;
 
     // Query API capabilities
 
@@ -128,6 +129,11 @@ namespace libmotioncapture {
     virtual bool supportsPointCloud() const = 0;
     // returns true if timestamp is available
     virtual bool supportsTimeStamp() const = 0;
+
+  protected:
+    mutable std::map<std::string, Object> objects_;
+    mutable pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud_;
+    mutable std::vector<LatencyInfo> latencies_;
   };
 
 } // namespace libobjecttracker

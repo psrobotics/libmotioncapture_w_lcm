@@ -14,45 +14,47 @@ namespace libmotioncapture {
 
   public:
     float dt;
-    std::vector<Object> objects;
-    pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud;
   };
 
   MotionCaptureTest::MotionCaptureTest(
     float dt,
-    const std::vector<Object>& objects,
-    const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud)
+    const std::vector<Object>& objects)//,
+    // const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud)
   {
     pImpl = new MotionCaptureTestImpl;
     pImpl->dt = dt;
-    pImpl->objects = objects;
-    pImpl->pointCloud = pointCloud;
+    for (const auto& obj : objects) {
+      objects_[obj.name()] = obj;
+    }
+    Eigen::Quaternionf q(0,0,0,1); 
+    objects_["test"] = Object("test", Eigen::Vector3f(0,1,2), q);
+    // pointcloud_ = pointCloud;
   }
 
   void MotionCaptureTest::waitForNextFrame()
   {
     std::this_thread::sleep_for(std::chrono::milliseconds((int)(pImpl->dt * 1000)));
+    latencies_.clear();
+    // pointcloud_->clear();
+    latencies_.clear();
   }
 
-  void MotionCaptureTest::getObjects(
-    std::vector<Object> & result) const
+  const std::map<std::string, Object>& MotionCaptureTest::objects() const
   {
-    result = pImpl->objects;
+    return objects_;
   }
 
-  void MotionCaptureTest::getPointCloud(
-    pcl::PointCloud<pcl::PointXYZ>::Ptr result) const
+  const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureTest::pointCloud() const
   {
-    pcl::copyPointCloud(*pImpl->pointCloud, *result);
+    return pointcloud_;
   }
 
-  void MotionCaptureTest::getLatency(
-    std::vector<libmotioncapture::LatencyInfo> & result) const
+  const std::vector<libmotioncapture::LatencyInfo>& MotionCaptureTest::latency() const
   {
-    result.clear();
+    return latencies_;
   }
 
-  uint64_t MotionCaptureTest::getTimeStamp() const
+  uint64_t MotionCaptureTest::timeStamp() const
   {
     return 0;
   }

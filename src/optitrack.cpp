@@ -632,10 +632,10 @@ namespace libmotioncapture {
 
   }
 
-  void MotionCaptureOptitrack::getObjects(
-    std::vector<Object> & result) const
+  const std::map<std::string, Object>& MotionCaptureOptitrack::objects() const
   {
-    result.clear();
+    // TODO: avoid copies here...
+    objects_.clear();
     for (const auto& rb : pImpl->rigidBodies) {
       if (rb.bTrackingValid) {
         const auto& def = pImpl->rigidBodyDefinitions[rb.ID];
@@ -651,28 +651,29 @@ namespace libmotioncapture {
           rb.qy, // y
           rb.qz  // z
           );
-
-        result.push_back(Object(def.name, position, rotation));
+        objects_[def.name] = Object(def.name, position, rotation);
       }
     }
+    return objects_;
   }
 
-  void MotionCaptureOptitrack::getPointCloud(
-    pcl::PointCloud<pcl::PointXYZ>::Ptr result) const
+  const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureOptitrack::pointCloud() const
   {
-    result->clear();
+    // TODO: avoid copies here...
+    pointcloud_->clear();
     for (const auto& marker : pImpl->markers) {
-      result->push_back(pcl::PointXYZ(marker.x, marker.y, marker.z));
+      pointcloud_->push_back(pcl::PointXYZ(marker.x, marker.y, marker.z));
     }
+    return pointcloud_;
   }
 
-  void MotionCaptureOptitrack::getLatency(
-    std::vector<libmotioncapture::LatencyInfo> & result) const
+  const std::vector<libmotioncapture::LatencyInfo>& MotionCaptureOptitrack::latency() const
   {
-    result.clear();
+    latencies_.clear();
+    return latencies_;
   }
 
-  uint64_t MotionCaptureOptitrack::getTimeStamp() const
+  uint64_t MotionCaptureOptitrack::timeStamp() const
   {
     return 0;
   }
