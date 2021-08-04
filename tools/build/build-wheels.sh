@@ -16,7 +16,7 @@ then
     $DOCKER run --rm -v $(realpath $(dirname $0)/../..):/io quay.io/pypa/manylinux2014_x86_64 /io/tools/build/build-wheels.sh
 else
     # We are in the image, building!
-    yum install -y pcllib-devel
+    yum install -y pcl-devel
 
     cd /io
 
