@@ -1,5 +1,8 @@
-build/
+build/*
 externalDependencies/phasespace_sdk/
+.vscode/
+dist/
 
 *.so
 *.egg-info/
+*.whl
