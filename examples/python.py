@@ -1,0 +1,7 @@
+import motioncapture
+
+mc = motioncapture.MotionCaptureOptitrack("130.149.82.29")
+while True:
+    mc.waitForNextFrame()
+    for name, obj in mc.objects.items():
+        print(name, obj.position, obj.rotation.z)

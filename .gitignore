@@ -1,2 +1,5 @@
-externalDependencies/vicon_sdk/
+build/
 externalDependencies/phasespace_sdk/
+
+*.so
+*.egg-info/
