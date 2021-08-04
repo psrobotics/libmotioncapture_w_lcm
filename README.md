@@ -20,7 +20,7 @@ After setup, enable the appropriate compile flags in `CMakeLists.txt`.
 ## Prerequisites
 
 ```
-sudo apt install python3-pybind11 ninja-build
+sudo apt install ninja-build
 ```
 
 ## Python

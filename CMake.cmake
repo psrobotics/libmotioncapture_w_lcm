@@ -140,9 +140,9 @@ set(LIBMOTIONCAPTURE_LINK_DIR ${my_link_directories} CACHE STRING "link director
 
 if (BUILD_PYTHON_BINDINGS)
   # Python bindings
-  # add_subdirectory(pybind11)
-  find_package(Python COMPONENTS Interpreter Development)
-  find_package(pybind11 CONFIG)
+  add_subdirectory(externalDependencies/pybind11)
+  # find_package(Python COMPONENTS Interpreter Development)
+  # find_package(pybind11 CONFIG)
 
   pybind11_add_module(motioncapture
     src/python_bindings.cpp
