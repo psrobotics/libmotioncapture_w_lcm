@@ -79,21 +79,19 @@ namespace libmotioncapture {
     } while(eType != CRTPacket::PacketData);
   }
 
-  void MotionCaptureQualisys::getObjects(
-    std::vector<RigidBody>& result) const
+  const std::map<std::string, RigidBody>& MotionCaptureQualisys::rigidBodies() const
   {
     float pos[3], rx, ry, rz;
 
-    result.clear();
+    rigidBodies_.clear();
     size_t count = pImpl->pRTPacket->Get6DOFEulerBodyCount();
 
     for(size_t i = 0; i < count; ++i) {
+      std::string name = std::string(pImpl->poRTProtocol.Get6DOFBodyName(i));
       pImpl->pRTPacket->Get6DOFEulerBody(i, pos[0], pos[1], pos[2], rx, ry, rz);
       if (std::isnan(pos[0])) {
-        result.push_back(RigidBody(std::string(pImpl->poRTProtocol.Get6DOFBodyName(i))));
+        rigidBodies_[name] = RigidBody(name);
       } else {
-        std::string name = std::string(pImpl->poRTProtocol.Get6DOFBodyName(i));
-
         Eigen::Vector3f position = Eigen::Vector3f(pos) / 1000.0;
 
         Eigen::Matrix3f rotation;
@@ -102,14 +100,13 @@ namespace libmotioncapture {
                  * Eigen::AngleAxisf((rz/180.0f)*M_PI, Eigen::Vector3f::UnitZ());
         Eigen::Quaternionf quaternion = Eigen::Quaternionf(rotation);
 
-        result.push_back(RigidBody(name, position, quaternion));
+        rigidBodies_[name] = RigidBody(name, position, quaternion);
       }
     }
+    return rigidBodies_;
   }
 
-  void MotionCaptureQualisys::getObjectByName(
-    const std::string& name,
-    RigidBody& result) const
+  RigidBody MotionCaptureQualisys::rigidBodyByName(const std::string &name) const
   {
     // Find object index
     size_t bodyCount = pImpl->pRTPacket->Get6DOFEulerBodyCount();
@@ -127,7 +124,7 @@ namespace libmotioncapture {
       pImpl->pRTPacket->Get6DOFEulerBody(bodyId, pos[0], pos[1], pos[2], rx, ry, rz);
 
       if (std::isnan(pos[0])) {
-        result = RigidBody(name);
+        return RigidBody(name);
       } else {
         Eigen::Vector3f position = Eigen::Vector3f(pos) / 1000.0;
 
@@ -137,56 +134,31 @@ namespace libmotioncapture {
                  * Eigen::AngleAxisf((rz/180.0f)*M_PI, Eigen::Vector3f::UnitZ());
         Eigen::Quaternionf quaternion = Eigen::Quaternionf(rotation);
 
-        result = RigidBody(name, position, quaternion);
+        return RigidBody(name, position, quaternion);
       }
     } else {
-      result = RigidBody(name);
+      return RigidBody(name);
     }
   }
 
-  void MotionCaptureQualisys::getPointCloud(
-    pcl::PointCloud<pcl::PointXYZ>::Ptr result) const
+  const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureQualisys::pointCloud() const
   {
-    result->clear();
+    pointcloud_->clear();
     size_t count = pImpl->pRTPacket->Get3DNoLabelsMarkerCount();
     for(size_t i = 0; i < count; ++i) {
       float x, y, z;
       uint nId;
       pImpl->pRTPacket->Get3DNoLabelsMarker(i, x, y, z, nId);
-      result->push_back(pcl::PointXYZ(x / 1000.0,
-                                      y / 1000.0,
-                                      z / 1000.0));
+      pointcloud_->push_back(pcl::PointXYZ(x / 1000.0,
+                                           y / 1000.0,
+                                           z / 1000.0));
     }
+    return pointcloud_;
   }
 
-  void MotionCaptureQualisys::getLatency(
-    std::vector<LatencyInfo>& result) const
-  {
-    result.clear();
-  }
-
-  uint64_t MotionCaptureQualisys::getTimeStamp() const
+  uint64_t MotionCaptureQualisys::timeStamp() const
   {
     return pImpl->pRTPacket->GetTimeStamp();
   }
 
-  bool MotionCaptureQualisys::supportsRigidBodyTracking() const
-  {
-    return true;
-  }
-
-  bool MotionCaptureQualisys::supportsLatencyEstimate() const
-  {
-    return false;
-  }
-
-  bool MotionCaptureQualisys::supportsPointCloud() const
-  {
-    return true;
-  }
-
-  bool MotionCaptureQualisys::supportsTimeStamp() const
-  {
-    return true;
-  }
 }
