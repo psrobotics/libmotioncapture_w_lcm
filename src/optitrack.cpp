@@ -667,40 +667,10 @@ namespace libmotioncapture {
     return pointcloud_;
   }
 
-  const std::vector<libmotioncapture::LatencyInfo>& MotionCaptureOptitrack::latency() const
-  {
-    latencies_.clear();
-    return latencies_;
-  }
-
-  uint64_t MotionCaptureOptitrack::timeStamp() const
-  {
-    return 0;
-  }
-
   MotionCaptureOptitrack::~MotionCaptureOptitrack()
   {
     delete pImpl;
   }
 
-  bool MotionCaptureOptitrack::supportsRigidBodyTracking() const
-  {
-    return true;
-  }
-
-  bool MotionCaptureOptitrack::supportsLatencyEstimate() const
-  {
-    return false;
-  }
-
-  bool MotionCaptureOptitrack::supportsPointCloud() const
-  {
-    return true;
-  }
-
-  bool MotionCaptureOptitrack::supportsTimeStamp() const
-  {
-    return false;
-  }
 }
 

@@ -104,31 +104,58 @@ namespace libmotioncapture {
     // Query data
 
     // returns reference to objects available in the current frame
-    virtual const std::map<std::string, RigidBody>& rigidBodies() const = 0;
+    virtual const std::map<std::string, RigidBody>& rigidBodies() const
+    {
+      rigidBodies_.clear();
+      return rigidBodies_;
+    }
 
     // returns an object with a specified name
     virtual const RigidBody& rigidBodyByName(
       const std::string& name) const;
 
     // returns pointer to point cloud (all unlabled markers)
-    virtual const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud() const = 0;
+    virtual const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud() const
+    {
+      pointcloud_->clear();
+      return pointcloud_;
+    }
 
     // return latency information
-    virtual const std::vector<LatencyInfo>& latency() const = 0;
+    virtual const std::vector<LatencyInfo>& latency() const
+    {
+      latencies_.clear();
+      return latencies_;
+    }
 
     // returns timestamp in microseconds
-    virtual uint64_t timeStamp() const = 0;
+    virtual uint64_t timeStamp() const
+    {
+      return 0;
+    }
 
     // Query API capabilities
 
     // return true, if tracking of objects is supported
-    virtual bool supportsRigidBodyTracking() const = 0;
+    virtual bool supportsRigidBodyTracking() const
+    {
+      return false;
+    }
     // returns true, if latency can be estimated
-    virtual bool supportsLatencyEstimate() const = 0;
+    virtual bool supportsLatencyEstimate() const
+    {
+      return false;
+    }
     // returns true if raw point cloud is available
-    virtual bool supportsPointCloud() const = 0;
+    virtual bool supportsPointCloud() const
+    {
+      return false;
+    }
     // returns true if timestamp is available
-    virtual bool supportsTimeStamp() const = 0;
+    virtual bool supportsTimeStamp() const
+    {
+      return false;
+    }
 
   protected:
     mutable std::map<std::string, RigidBody> rigidBodies_;
