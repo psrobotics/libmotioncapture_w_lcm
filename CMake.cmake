@@ -7,7 +7,7 @@ option(ENABLE_QUALISYS "Enable Qualisys" ON)
 option(ENABLE_OPTITRACK "Enable Optitrack" ON)
 option(ENABLE_VICON "Enable Vicon" ON)
 option(ENABLE_PHASESPACE "Enable PhaseSpace" OFF)
-option(ENABLE_VRPN "Enable VRPN" OFF)
+option(ENABLE_VRPN "Enable VRPN" ON)
 
 # Enable C++14
 set(CMAKE_CXX_STANDARD 14)
@@ -16,9 +16,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(PCL REQUIRED)
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vicon-datastream-sdk/)
-set(NATNET_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/NatNetLinux/)
 set(PHASESPACE_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/phasespace_sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/qualisys_cpp_sdk/)
+set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vrpn/)
 
 ###########
 ## Build ##
@@ -57,7 +57,6 @@ endif()
 if (ENABLE_OPTITRACK)
   set(my_include_directories
     ${my_include_directories}
-    ${NATNET_DIR}/include
   )
   set(my_files
     ${my_files}
@@ -102,10 +101,11 @@ if (ENABLE_QUALISYS)
 endif()
 
 if (ENABLE_VRPN)
-  find_package(VRPN REQUIRED)
+  option(VRPN_BUILD_CLIENT_LIBRARY "" ON)
+  add_subdirectory(externalDependencies/vrpn)
   set(my_include_directories
     ${my_include_directories}
-    ${VRPN_INCLUDE_DIR}
+    ${VRPN_DIR}
   )
   set(my_files
     ${my_files}
@@ -113,7 +113,7 @@ if (ENABLE_VRPN)
   )
   set(my_libraries
     ${my_libraries}
-    ${VRPN_LIBRARIES}
+    ${VRPN_CLIENT_LIBRARY}
   )
 endif()
 

@@ -95,10 +95,9 @@ namespace libmotioncapture {
       lastTime = now;
   }
 
-  void MotionCaptureVrpn::getObjects(
-    std::vector<Object>& result) const
+  const std::map<std::string, RigidBody>& MotionCaptureVrpn::rigidBodies() const
   {
-    result.clear();
+    rigidBodies_.clear();
     for (const auto& data : pImpl->trackerData) {
       Eigen::Vector3f position(
         data.second.pos[0],
@@ -112,13 +111,12 @@ namespace libmotioncapture {
         data.second.quat[2]  // z
         );
 
-      result.push_back(Object(data.first, position, rotation));
+      rigidBodies_[data.first] = RigidBody(data.first, position, rotation);
     }
+    return rigidBodies_;
   }
 
-  void MotionCaptureVrpn::getObjectByName(
-    const std::string& name,
-    Object& result) const
+  RigidBody MotionCaptureVrpn::rigidBodyByName(const std::string &name) const
   {
     const auto data = pImpl->trackerData.find(name);
     if (data != pImpl->trackerData.end()) {
@@ -135,44 +133,9 @@ namespace libmotioncapture {
         data->second.quat[2]  // z
         );
 
-      result = Object(name, position, rotation);
+      return RigidBody(name, position, rotation);
     }
+    return RigidBody(name);
   }
 
-  void MotionCaptureVrpn::getPointCloud(
-    pcl::PointCloud<pcl::PointXYZ>::Ptr result) const
-  {
-    result->clear();
-  }
-
-  void MotionCaptureVrpn::getLatency(
-    std::vector<LatencyInfo>& result) const
-  {
-    result.clear();
-  }
-
-  uint64_t MotionCaptureVrpn::getTimeStamp() const
-  {
-    return 0;
-  }
-
-  bool MotionCaptureVrpn::supportsObjectTracking() const
-  {
-    return true;
-  }
-
-  bool MotionCaptureVrpn::supportsLatencyEstimate() const
-  {
-    return false;
-  }
-
-  bool MotionCaptureVrpn::supportsPointCloud() const
-  {
-    return false;
-  }
-
-  bool MotionCaptureVrpn::supportsTimeStamp() const
-  {
-    return false;
-  }
 }

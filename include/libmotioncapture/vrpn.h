@@ -16,16 +16,14 @@ namespace libmotioncapture {
     virtual ~MotionCaptureVrpn();
 
     // implementations for MotionCapture interface
-    virtual const std::map<std::string, Object>& objects() const;
-    virtual const Object& objectByName(const std::string& name) const;
-    virtual const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud() const;
-    virtual const std::vector<LatencyInfo>& latency() const;
-    virtual uint64_t timeStamp() const;
+    virtual void waitForNextFrame();
+    virtual const std::map<std::string, RigidBody> &rigidBodies() const;
+    virtual RigidBody rigidBodyByName(const std::string &name) const;
 
-    virtual bool supportsObjectTracking() const;
-    virtual bool supportsLatencyEstimate() const;
-    virtual bool supportsPointCloud() const;
-    virtual bool supportsTimeStamp() const;
+    virtual bool supportsRigidBodyTracking() const
+    {
+      return true;
+    }
 
   private:
     MotionCaptureVrpnImpl* pImpl;

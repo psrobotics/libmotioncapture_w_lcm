@@ -8,3 +8,6 @@
 [submodule "externalDependencies/pybind11"]
 	path = externalDependencies/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "externalDependencies/vrpn"]
+	path = externalDependencies/vrpn
+	url = https://github.com/vrpn/vrpn.git
