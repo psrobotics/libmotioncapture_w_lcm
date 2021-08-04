@@ -20,7 +20,7 @@ After setup, enable the appropriate compile flags in `CMakeLists.txt`.
 ## Prerequisites
 
 ```
-sudo apt install ninja-build
+sudo apt install libpcl-dev ninja-build
 ```
 
 ## Python
