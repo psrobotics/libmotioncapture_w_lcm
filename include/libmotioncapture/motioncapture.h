@@ -103,15 +103,15 @@ namespace libmotioncapture {
 
     // Query data
 
-    // returns reference to objects available in the current frame
+    // returns reference to rigid bodies available in the current frame
     virtual const std::map<std::string, RigidBody>& rigidBodies() const
     {
       rigidBodies_.clear();
       return rigidBodies_;
     }
 
-    // returns an object with a specified name
-    virtual const RigidBody& rigidBodyByName(
+    // returns copy of rigid body with a specified name
+    virtual RigidBody rigidBodyByName(
       const std::string& name) const;
 
     // returns pointer to point cloud (all unlabled markers)

@@ -2,7 +2,7 @@
 
 namespace libmotioncapture {
 
-  const RigidBody& MotionCapture::rigidBodyByName(
+  RigidBody MotionCapture::rigidBodyByName(
       const std::string& name) const
   {
     const auto& obj = rigidBodies();
