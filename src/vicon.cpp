@@ -64,96 +64,91 @@ namespace libmotioncapture {
     }
   }
 
-  void MotionCaptureVicon::getObjects(
-    std::vector<RigidBody>& result) const
+  const std::map<std::string, RigidBody>& MotionCaptureVicon::rigidBodies() const
   {
-    result.clear();
+    rigidBodies_.clear();
     size_t count = pImpl->client.GetSubjectCount().SubjectCount;
-    result.resize(count);
     for (size_t i = 0; i < count; ++i) {
       const std::string name = pImpl->client.GetSubjectName(i).SubjectName;
-      getObjectByName(name, result[i]);
+      auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, name);
+      auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, name);
+      if (   translation.Result == Result::Success
+          && quaternion.Result == Result::Success
+          && !translation.Occluded
+          && !quaternion.Occluded) {
+
+        Eigen::Vector3f position(
+          translation.Translation[0] / 1000.0,
+          translation.Translation[1] / 1000.0,
+          translation.Translation[2] / 1000.0);
+
+        Eigen::Quaternionf rotation(
+          quaternion.Rotation[3], // w
+          quaternion.Rotation[0], // x
+          quaternion.Rotation[1], // y
+          quaternion.Rotation[2]  // z
+          );
+
+        rigidBodies_[name] = RigidBody(name, position, rotation);
+      }
     }
+    return rigidBodies_;
   }
 
-  void MotionCaptureVicon::getObjectByName(
-    const std::string& name,
-    RigidBody& result) const
+  // void MotionCaptureVicon::getObjectByName(
+  //   const std::string& name,
+  //   RigidBody& result) const
+  // {
+  //   auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, name);
+  //   auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, name);
+  //   if (   translation.Result == Result::Success
+  //       && quaternion.Result == Result::Success
+  //       && !translation.Occluded
+  //       && !quaternion.Occluded) {
+
+  //     Eigen::Vector3f position(
+  //       translation.Translation[0] / 1000.0,
+  //       translation.Translation[1] / 1000.0,
+  //       translation.Translation[2] / 1000.0);
+
+  //     Eigen::Quaternionf rotation(
+  //       quaternion.Rotation[3], // w
+  //       quaternion.Rotation[0], // x
+  //       quaternion.Rotation[1], // y
+  //       quaternion.Rotation[2]  // z
+  //       );
+
+  //     result = RigidBody(name, position, rotation);
+  //   } else {
+  //     result = RigidBody(name);
+  //   }
+  // }
+
+  const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureVicon::pointCloud() const
   {
-    auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, name);
-    auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, name);
-    if (   translation.Result == Result::Success
-        && quaternion.Result == Result::Success
-        && !translation.Occluded
-        && !quaternion.Occluded) {
-
-      Eigen::Vector3f position(
-        translation.Translation[0] / 1000.0,
-        translation.Translation[1] / 1000.0,
-        translation.Translation[2] / 1000.0);
-
-      Eigen::Quaternionf rotation(
-        quaternion.Rotation[3], // w
-        quaternion.Rotation[0], // x
-        quaternion.Rotation[1], // y
-        quaternion.Rotation[2]  // z
-        );
-
-      result = RigidBody(name, position, rotation);
-    } else {
-      result = RigidBody(name);
-    }
-  }
-
-  void MotionCaptureVicon::getPointCloud(
-    pcl::PointCloud<pcl::PointXYZ>::Ptr result) const
-  {
-    result->clear();
+    pointcloud_->clear();
     size_t count = pImpl->client.GetUnlabeledMarkerCount().MarkerCount;
     for(size_t i = 0; i < count; ++i) {
       Output_GetUnlabeledMarkerGlobalTranslation translation =
         pImpl->client.GetUnlabeledMarkerGlobalTranslation(i);
-      result->push_back(pcl::PointXYZ(
+      pointcloud_->push_back(pcl::PointXYZ(
         translation.Translation[0] / 1000.0,
         translation.Translation[1] / 1000.0,
         translation.Translation[2] / 1000.0));
     }
+    return pointcloud_;
   }
 
-  void MotionCaptureVicon::getLatency(
-    std::vector<LatencyInfo>& result) const
+  const std::vector<LatencyInfo>& MotionCaptureVicon::latency() const
   {
-    result.clear();
+    latencies_.clear();
     size_t latencyCount = pImpl->client.GetLatencySampleCount().Count;
     for(size_t i = 0; i < latencyCount; ++i) {
       std::string sampleName  = pImpl->client.GetLatencySampleName(i).Name;
       double      sampleValue = pImpl->client.GetLatencySampleValue(sampleName).Value;
-      result.emplace_back(LatencyInfo(sampleName, sampleValue));
+      latencies_.emplace_back(LatencyInfo(sampleName, sampleValue));
     }
+    return latencies_;
   }
 
-  uint64_t MotionCaptureVicon::getTimeStamp() const
-  {
-    return 0;
-  }
-
-  bool MotionCaptureVicon::supportsRigidBodyTracking() const
-  {
-    return true;
-  }
-
-  bool MotionCaptureVicon::supportsLatencyEstimate() const
-  {
-    return true;
-  }
-
-  bool MotionCaptureVicon::supportsPointCloud() const
-  {
-    return true;
-  }
-
-  bool MotionCaptureVicon::supportsTimeStamp() const
-  {
-    return false;
-  }
 }

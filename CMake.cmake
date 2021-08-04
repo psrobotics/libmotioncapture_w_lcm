@@ -5,7 +5,7 @@ project(libmotioncapture)
 option(BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
 option(ENABLE_QUALISYS "Enable Qualisys" OFF)
 option(ENABLE_OPTITRACK "Enable Optitrack" ON)
-option(ENABLE_VICON "Enable Vicon" OFF)
+option(ENABLE_VICON "Enable Vicon" ON)
 option(ENABLE_PHASESPACE "Enable PhaseSpace" OFF)
 option(ENABLE_VRPN "Enable VRPN" OFF)
 
