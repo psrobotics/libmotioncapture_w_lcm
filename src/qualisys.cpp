@@ -80,7 +80,7 @@ namespace libmotioncapture {
   }
 
   void MotionCaptureQualisys::getObjects(
-    std::vector<Object>& result) const
+    std::vector<RigidBody>& result) const
   {
     float pos[3], rx, ry, rz;
 
@@ -90,7 +90,7 @@ namespace libmotioncapture {
     for(size_t i = 0; i < count; ++i) {
       pImpl->pRTPacket->Get6DOFEulerBody(i, pos[0], pos[1], pos[2], rx, ry, rz);
       if (std::isnan(pos[0])) {
-        result.push_back(Object(std::string(pImpl->poRTProtocol.Get6DOFBodyName(i))));
+        result.push_back(RigidBody(std::string(pImpl->poRTProtocol.Get6DOFBodyName(i))));
       } else {
         std::string name = std::string(pImpl->poRTProtocol.Get6DOFBodyName(i));
 
@@ -102,14 +102,14 @@ namespace libmotioncapture {
                  * Eigen::AngleAxisf((rz/180.0f)*M_PI, Eigen::Vector3f::UnitZ());
         Eigen::Quaternionf quaternion = Eigen::Quaternionf(rotation);
 
-        result.push_back(Object(name, position, quaternion));
+        result.push_back(RigidBody(name, position, quaternion));
       }
     }
   }
 
   void MotionCaptureQualisys::getObjectByName(
     const std::string& name,
-    Object& result) const
+    RigidBody& result) const
   {
     // Find object index
     size_t bodyCount = pImpl->pRTPacket->Get6DOFEulerBodyCount();
@@ -127,7 +127,7 @@ namespace libmotioncapture {
       pImpl->pRTPacket->Get6DOFEulerBody(bodyId, pos[0], pos[1], pos[2], rx, ry, rz);
 
       if (std::isnan(pos[0])) {
-        result = Object(name);
+        result = RigidBody(name);
       } else {
         Eigen::Vector3f position = Eigen::Vector3f(pos) / 1000.0;
 
@@ -137,10 +137,10 @@ namespace libmotioncapture {
                  * Eigen::AngleAxisf((rz/180.0f)*M_PI, Eigen::Vector3f::UnitZ());
         Eigen::Quaternionf quaternion = Eigen::Quaternionf(rotation);
 
-        result = Object(name, position, quaternion);
+        result = RigidBody(name, position, quaternion);
       }
     } else {
-      result = Object(name);
+      result = RigidBody(name);
     }
   }
 
@@ -170,7 +170,7 @@ namespace libmotioncapture {
     return pImpl->pRTPacket->GetTimeStamp();
   }
 
-  bool MotionCaptureQualisys::supportsObjectTracking() const
+  bool MotionCaptureQualisys::supportsRigidBodyTracking() const
   {
     return true;
   }

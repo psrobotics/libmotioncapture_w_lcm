@@ -65,7 +65,7 @@ namespace libmotioncapture {
   }
 
   void MotionCaptureVicon::getObjects(
-    std::vector<Object>& result) const
+    std::vector<RigidBody>& result) const
   {
     result.clear();
     size_t count = pImpl->client.GetSubjectCount().SubjectCount;
@@ -78,7 +78,7 @@ namespace libmotioncapture {
 
   void MotionCaptureVicon::getObjectByName(
     const std::string& name,
-    Object& result) const
+    RigidBody& result) const
   {
     auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, name);
     auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, name);
@@ -99,9 +99,9 @@ namespace libmotioncapture {
         quaternion.Rotation[2]  // z
         );
 
-      result = Object(name, position, rotation);
+      result = RigidBody(name, position, rotation);
     } else {
-      result = Object(name);
+      result = RigidBody(name);
     }
   }
 
@@ -137,7 +137,7 @@ namespace libmotioncapture {
     return 0;
   }
 
-  bool MotionCaptureVicon::supportsObjectTracking() const
+  bool MotionCaptureVicon::supportsRigidBodyTracking() const
   {
     return true;
   }

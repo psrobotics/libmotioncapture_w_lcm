@@ -18,16 +18,16 @@ namespace libmotioncapture {
 
   MotionCaptureTest::MotionCaptureTest(
     float dt,
-    const std::vector<Object>& objects)//,
+    const std::vector<RigidBody>& objects)//,
     // const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud)
   {
     pImpl = new MotionCaptureTestImpl;
     pImpl->dt = dt;
     for (const auto& obj : objects) {
-      objects_[obj.name()] = obj;
+      rigidBodies_[obj.name()] = obj;
     }
     Eigen::Quaternionf q(0,0,0,1); 
-    objects_["test"] = Object("test", Eigen::Vector3f(0,1,2), q);
+    rigidBodies_["test"] = RigidBody("test", Eigen::Vector3f(0,1,2), q);
     // pointcloud_ = pointCloud;
   }
 
@@ -39,9 +39,9 @@ namespace libmotioncapture {
     latencies_.clear();
   }
 
-  const std::map<std::string, Object>& MotionCaptureTest::objects() const
+  const std::map<std::string, RigidBody>& MotionCaptureTest::rigidBodies() const
   {
-    return objects_;
+    return rigidBodies_;
   }
 
   const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureTest::pointCloud() const
@@ -64,7 +64,7 @@ namespace libmotioncapture {
     delete pImpl;
   }
 
-  bool MotionCaptureTest::supportsObjectTracking() const
+  bool MotionCaptureTest::supportsRigidBodyTracking() const
   {
     return true;
   }

@@ -8,19 +8,19 @@ namespace libmotioncapture {
   public:
     MotionCaptureTest(
       float dt,
-      const std::vector<Object>& objects);//,
+      const std::vector<RigidBody>& objects);//,
       // const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud);
 
     virtual ~MotionCaptureTest();
 
     // implementations for MotionCapture interface
     virtual void waitForNextFrame();
-    virtual const std::map<std::string, Object>& objects() const;
+    virtual const std::map<std::string, RigidBody>& rigidBodies() const;
     virtual const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud() const;
     virtual const std::vector<LatencyInfo>& latency() const;
     virtual uint64_t timeStamp() const;
 
-    virtual bool supportsObjectTracking() const;
+    virtual bool supportsRigidBodyTracking() const;
     virtual bool supportsLatencyEstimate() const;
     virtual bool supportsPointCloud() const;
     virtual bool supportsTimeStamp() const;

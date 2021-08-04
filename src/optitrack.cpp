@@ -632,10 +632,10 @@ namespace libmotioncapture {
 
   }
 
-  const std::map<std::string, Object>& MotionCaptureOptitrack::objects() const
+  const std::map<std::string, RigidBody>& MotionCaptureOptitrack::rigidBodies() const
   {
     // TODO: avoid copies here...
-    objects_.clear();
+    rigidBodies_.clear();
     for (const auto& rb : pImpl->rigidBodies) {
       if (rb.bTrackingValid) {
         const auto& def = pImpl->rigidBodyDefinitions[rb.ID];
@@ -651,10 +651,10 @@ namespace libmotioncapture {
           rb.qy, // y
           rb.qz  // z
           );
-        objects_[def.name] = Object(def.name, position, rotation);
+        rigidBodies_[def.name] = RigidBody(def.name, position, rotation);
       }
     }
-    return objects_;
+    return rigidBodies_;
   }
 
   const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureOptitrack::pointCloud() const
@@ -683,7 +683,7 @@ namespace libmotioncapture {
     delete pImpl;
   }
 
-  bool MotionCaptureOptitrack::supportsObjectTracking() const
+  bool MotionCaptureOptitrack::supportsRigidBodyTracking() const
   {
     return true;
   }

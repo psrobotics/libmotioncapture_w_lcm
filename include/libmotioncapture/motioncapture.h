@@ -14,10 +14,10 @@
 
 namespace libmotioncapture {
 
-  class Object
+  class RigidBody
   {
   public:
-    Object(
+    RigidBody(
       const std::string& name,
       const Eigen::Vector3f& position,
       Eigen::Quaternionf& rotation)
@@ -28,7 +28,7 @@ namespace libmotioncapture {
     {
     }
 
-    Object(
+    RigidBody(
       const std::string& name)
       : m_name(name)
       , m_position()
@@ -37,7 +37,7 @@ namespace libmotioncapture {
     {
     }
 
-    Object()
+    RigidBody()
       : m_name()
       , m_position()
       , m_rotation()
@@ -104,10 +104,10 @@ namespace libmotioncapture {
     // Query data
 
     // returns reference to objects available in the current frame
-    virtual const std::map<std::string, Object>& objects() const = 0;
+    virtual const std::map<std::string, RigidBody>& rigidBodies() const = 0;
 
     // returns an object with a specified name
-    virtual const Object& objectByName(
+    virtual const RigidBody& rigidBodyByName(
       const std::string& name) const;
 
     // returns pointer to point cloud (all unlabled markers)
@@ -122,7 +122,7 @@ namespace libmotioncapture {
     // Query API capabilities
 
     // return true, if tracking of objects is supported
-    virtual bool supportsObjectTracking() const = 0;
+    virtual bool supportsRigidBodyTracking() const = 0;
     // returns true, if latency can be estimated
     virtual bool supportsLatencyEstimate() const = 0;
     // returns true if raw point cloud is available
@@ -131,7 +131,7 @@ namespace libmotioncapture {
     virtual bool supportsTimeStamp() const = 0;
 
   protected:
-    mutable std::map<std::string, Object> objects_;
+    mutable std::map<std::string, RigidBody> rigidBodies_;
     mutable pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud_;
     mutable std::vector<LatencyInfo> latencies_;
   };

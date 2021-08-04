@@ -36,23 +36,23 @@ PYBIND11_MODULE(motioncapture, m) {
       .def_property_readonly("z", py::overload_cast<>(&Eigen::Quaternionf::z, py::const_))
       .def_property_readonly("w", py::overload_cast<>(&Eigen::Quaternionf::w, py::const_));
 
-  // Object
-  py::class_<Object>(m, "Object")
-      .def_property_readonly("name", &Object::name)
-      .def_property_readonly("position", &Object::position)
-      .def_property_readonly("rotation", &Object::rotation)
-      .def_property_readonly("occluded", &Object::occluded);
+  // RigidBody
+  py::class_<RigidBody>(m, "RigidBody")
+      .def_property_readonly("name", &RigidBody::name)
+      .def_property_readonly("position", &RigidBody::position)
+      .def_property_readonly("rotation", &RigidBody::rotation)
+      .def_property_readonly("occluded", &RigidBody::occluded);
 
   py::class_<MotionCaptureTest>(m, "MotionCaptureTest")
-      .def(py::init<float, const std::vector<Object>&>())//, const pcl::PointCloud<pcl::PointXYZ>::Ptr>())
+      .def(py::init<float, const std::vector<RigidBody>&>())//, const pcl::PointCloud<pcl::PointXYZ>::Ptr>())
       .def("waitForNextFrame", &MotionCaptureTest::waitForNextFrame, py::call_guard<py::gil_scoped_release>())
-      .def_property_readonly("objects", &MotionCaptureTest::objects);
+      .def_property_readonly("rigidBodies", &MotionCaptureTest::rigidBodies);
 
   //
   py::class_<MotionCaptureOptitrack>(m, "MotionCaptureOptitrack")
       .def(py::init<const std::string &>())
       .def("waitForNextFrame", &MotionCaptureOptitrack::waitForNextFrame, py::call_guard<py::gil_scoped_release>())
-      .def_property_readonly("objects", &MotionCaptureOptitrack::objects);
+      .def_property_readonly("rigidBodies", &MotionCaptureOptitrack::rigidBodies);
 
   // // Packet
   // py::class_<Packet>(m, "Packet", py::buffer_protocol())
