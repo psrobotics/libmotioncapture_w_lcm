@@ -34,9 +34,10 @@ set(my_files
   src/motioncapture.cpp
   src/testmocap.cpp
 )
-set(my_libraries
-  ${PCL_LIBRARIES}
-)
+# We only use the PCL datatypes, so no need to link against it
+# set(my_libraries
+#   ${PCL_LIBRARIES}
+# )
 
 if (ENABLE_VICON)
   add_subdirectory(externalDependencies/vicon-datastream-sdk)
