@@ -15,10 +15,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(PCL REQUIRED COMPONENTS common)
+find_package(yaml-cpp REQUIRED)
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vicon-datastream-sdk/)
 set(PHASESPACE_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/phasespace_sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/qualisys_cpp_sdk/)
 set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vrpn/)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ###########
 ## Build ##
@@ -35,11 +38,13 @@ set(my_files
   src/testmocap.cpp
 )
 # We only use the PCL datatypes, so no need to link against it
-# set(my_libraries
+set(my_libraries
 #   ${PCL_LIBRARIES}
-# )
+  yaml-cpp
+)
 
 if (ENABLE_VICON)
+  add_definitions(-DENABLE_VICON)
   add_subdirectory(externalDependencies/vicon-datastream-sdk)
   set(my_include_directories
     ${my_include_directories}
@@ -56,6 +61,7 @@ if (ENABLE_VICON)
 endif()
 
 if (ENABLE_OPTITRACK)
+  add_definitions(-DENABLE_OPTITRACK)
   set(my_include_directories
     ${my_include_directories}
   )
@@ -66,6 +72,7 @@ if (ENABLE_OPTITRACK)
 endif()
 
 if (ENABLE_PHASESPACE)
+  add_definitions(-DENABLE_PHASESPACE)
   set(my_include_directories
     ${my_include_directories}
     ${PHASESPACE_SDK_DIR}/include
@@ -86,6 +93,7 @@ if (ENABLE_PHASESPACE)
 endif()
 
 if (ENABLE_QUALISYS)
+  add_definitions(-DENABLE_QUALISYS)
   add_subdirectory(externalDependencies/qualisys_cpp_sdk)
   set(my_include_directories
     ${my_include_directories}
@@ -102,6 +110,7 @@ if (ENABLE_QUALISYS)
 endif()
 
 if (ENABLE_VRPN)
+  add_definitions(-DENABLE_VRPN)
   option(VRPN_BUILD_CLIENT_LIBRARY "" ON)
   add_subdirectory(externalDependencies/vrpn)
   set(my_include_directories

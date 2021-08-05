@@ -29,6 +29,8 @@ PYBIND11_MODULE(motioncapture, m) {
 
   // m.attr("__version__") = version();
 
+  m.def("connect", &MotionCapture::connect);
+
   // Quaternions
   py::class_<Eigen::Quaternionf>(m, "Quaternion")
       .def_property_readonly("x", py::overload_cast<>(&Eigen::Quaternionf::x, py::const_))
@@ -47,6 +49,11 @@ PYBIND11_MODULE(motioncapture, m) {
       .def(py::init<float, const std::vector<RigidBody>&>())//, const pcl::PointCloud<pcl::PointXYZ>::Ptr>())
       .def("waitForNextFrame", &MotionCaptureTest::waitForNextFrame, py::call_guard<py::gil_scoped_release>())
       .def_property_readonly("rigidBodies", &MotionCaptureTest::rigidBodies);
+
+  //
+  py::class_<MotionCapture>(m, "MotionCapture")
+      .def("waitForNextFrame", &MotionCapture::waitForNextFrame, py::call_guard<py::gil_scoped_release>())
+      .def_property_readonly("rigidBodies", &MotionCapture::rigidBodies);
 
   //
   py::class_<MotionCaptureOptitrack>(m, "MotionCaptureOptitrack")
