@@ -6,13 +6,11 @@
 #include <map>
 
 // Eigen
-#include <Eigen/Geometry> 
-
-// PCL
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
+#include <Eigen/Geometry>
 
 namespace libmotioncapture {
+
+  typedef Eigen::Matrix<float, Eigen::Dynamic, 3> PointCloud;
 
   class RigidBody
   {
@@ -119,9 +117,9 @@ namespace libmotioncapture {
       const std::string& name) const;
 
     // returns pointer to point cloud (all unlabled markers)
-    virtual const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud() const
+    virtual const PointCloud& pointCloud() const
     {
-      pointcloud_->clear();
+      pointcloud_.resize(0, Eigen::NoChange);
       return pointcloud_;
     }
 
@@ -163,7 +161,7 @@ namespace libmotioncapture {
 
   protected:
     mutable std::map<std::string, RigidBody> rigidBodies_;
-    mutable pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud_;
+    mutable PointCloud pointcloud_;
     mutable std::vector<LatencyInfo> latencies_;
   };
 

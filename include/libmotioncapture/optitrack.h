@@ -16,7 +16,7 @@ namespace libmotioncapture {
     // implementations for MotionCapture interface
     virtual void waitForNextFrame();
     virtual const std::map<std::string, RigidBody>& rigidBodies() const;
-    virtual const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud() const;
+    virtual const PointCloud& pointCloud() const;
 
     virtual bool supportsRigidBodyTracking() const
     {

@@ -32,7 +32,7 @@ jobs:
     
     - name: Build source distribution
       run: |
-        sudo apt-get install -y libpcl-dev ninja-build
+        sudo apt-get install -y libeigen3-dev ninja-build
         pip3 install wheel
         pip3 wheel dist/*.tar.gz
 
@@ -78,7 +78,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install python@${{ matrix.python }} pcl
+          brew install python@${{ matrix.python }} eigen
           brew link --overwrite python@${{ matrix.python }}
           pip3 install cmake ninja wheel
       

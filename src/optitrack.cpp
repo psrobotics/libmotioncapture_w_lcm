@@ -657,12 +657,13 @@ namespace libmotioncapture {
     return rigidBodies_;
   }
 
-  const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureOptitrack::pointCloud() const
+  const PointCloud& MotionCaptureOptitrack::pointCloud() const
   {
     // TODO: avoid copies here...
-    pointcloud_->clear();
-    for (const auto& marker : pImpl->markers) {
-      pointcloud_->push_back(pcl::PointXYZ(marker.x, marker.y, marker.z));
+    pointcloud_.resize(pImpl->markers.size(), Eigen::NoChange);
+    for (size_t r = 0; r < pImpl->markers.size(); ++r) {
+      const auto& marker = pImpl->markers[r];
+      pointcloud_.row(r) << marker.x, marker.y, marker.z;
     }
     return pointcloud_;
   }

@@ -141,17 +141,15 @@ namespace libmotioncapture {
     }
   }
 
-  const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureQualisys::pointCloud() const
+  const PointCloud& MotionCaptureQualisys::pointCloud() const
   {
-    pointcloud_->clear();
     size_t count = pImpl->pRTPacket->Get3DNoLabelsMarkerCount();
+    pointcloud_.resize(count, Eigen::NoChange);
     for(size_t i = 0; i < count; ++i) {
       float x, y, z;
       uint nId;
       pImpl->pRTPacket->Get3DNoLabelsMarker(i, x, y, z, nId);
-      pointcloud_->push_back(pcl::PointXYZ(x / 1000.0,
-                                           y / 1000.0,
-                                           z / 1000.0));
+      pointcloud_.row(i) << x / 1000.0, y / 1000.0, z / 1000.0;
     }
     return pointcloud_;
   }

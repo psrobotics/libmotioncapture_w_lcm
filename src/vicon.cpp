@@ -103,17 +103,17 @@ namespace libmotioncapture {
     }
   }
 
-  const pcl::PointCloud<pcl::PointXYZ>::Ptr MotionCaptureVicon::pointCloud() const
+  const PointCloud& MotionCaptureVicon::pointCloud() const
   {
-    pointcloud_->clear();
     size_t count = pImpl->client.GetUnlabeledMarkerCount().MarkerCount;
+    pointcloud_.resize(count, Eigen::NoChange);
     for(size_t i = 0; i < count; ++i) {
       Output_GetUnlabeledMarkerGlobalTranslation translation =
         pImpl->client.GetUnlabeledMarkerGlobalTranslation(i);
-      pointcloud_->push_back(pcl::PointXYZ(
+      pointcloud_.row(i) << 
         translation.Translation[0] / 1000.0,
         translation.Translation[1] / 1000.0,
-        translation.Translation[2] / 1000.0));
+        translation.Translation[2] / 1000.0;
     }
     return pointcloud_;
   }

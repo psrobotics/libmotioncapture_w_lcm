@@ -2,8 +2,6 @@
 
 #include <thread>
 
-#include <pcl/common/io.h>
-
 namespace libmotioncapture {
 
   class MotionCaptureTestImpl{

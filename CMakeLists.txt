@@ -15,7 +15,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Eigen3 REQUIRED)
-find_package(PCL REQUIRED COMPONENTS common)
 
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vicon-datastream-sdk/)
 set(PHASESPACE_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/phasespace_sdk/)
@@ -31,17 +30,12 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 ## Additional include folders
 set(my_include_directories
   include
-  ${PCL_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
 )
 set(my_link_directories)
 set(my_files
   src/motioncapture.cpp
   src/testmocap.cpp
-)
-# We only use the PCL datatypes, so no need to link against it
-set(my_libraries
-#   ${PCL_LIBRARIES}
 )
 
 if (ENABLE_VICON)
