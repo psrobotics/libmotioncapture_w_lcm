@@ -30,6 +30,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 ## Additional include folders
 set(my_include_directories
   include
+  ${Boost_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
 )
 set(my_link_directories)
