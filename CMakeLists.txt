@@ -7,6 +7,7 @@ option(ENABLE_QUALISYS "Enable Qualisys" ON)
 option(ENABLE_OPTITRACK "Enable Optitrack" ON)
 option(ENABLE_VICON "Enable Vicon" ON)
 option(ENABLE_VRPN "Enable VRPN" ON)
+option(BUILD_EXAMPLE "Enable Example application" ON)
 
 # Enable C++14
 set(CMAKE_CXX_STANDARD 14)
@@ -135,4 +136,14 @@ if (BUILD_PYTHON_BINDINGS)
     PRIVATE
       libmotioncapture
   )
+endif()
+
+if (BUILD_EXAMPLE)
+  add_executable(motioncapture_example
+    examples/main.cpp
+  )
+  target_link_libraries(motioncapture_example
+    libmotioncapture
+  )
+
 endif()
