@@ -112,6 +112,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install wheel
+          vcpkg install eigen3
 
       - name: Install boost
         uses: MarkusJx/install-boost@v1.0.1
