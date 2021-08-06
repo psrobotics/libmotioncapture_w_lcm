@@ -23,7 +23,7 @@ CMake flags can be used to disable individual systems in `CMakeLists.txt`.
 ## Prerequisites
 
 ```
-sudo apt install libeigen3-dev ninja-build
+sudo apt install libboost-system-dev libeigen3-dev ninja-build
 ```
 
 ## Python
