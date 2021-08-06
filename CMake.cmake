@@ -15,7 +15,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(PCL REQUIRED COMPONENTS common)
-find_package(yaml-cpp REQUIRED)
+# find_package(yaml-cpp REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(yaml-cpp REQUIRED IMPORTED_TARGET yaml-cpp)
+
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vicon-datastream-sdk/)
 set(PHASESPACE_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/phasespace_sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/qualisys_cpp_sdk/)
@@ -40,7 +43,7 @@ set(my_files
 # We only use the PCL datatypes, so no need to link against it
 set(my_libraries
 #   ${PCL_LIBRARIES}
-  yaml-cpp
+  PkgConfig::yaml-cpp
 )
 
 if (ENABLE_VICON)

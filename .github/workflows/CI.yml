@@ -78,7 +78,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install python@${{ matrix.python }} pcl
+          brew install python@${{ matrix.python }} pcl yaml-cpp
           brew link --overwrite python@${{ matrix.python }}
           pip3 install cmake ninja wheel
       
