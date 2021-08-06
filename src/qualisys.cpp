@@ -1,3 +1,7 @@
+// For windows, make sure that M_PI will be defined
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include "libmotioncapture/qualisys.h"
 
 // Qualisys
