@@ -151,7 +151,7 @@ namespace libmotioncapture {
     pointcloud_.resize(count, Eigen::NoChange);
     for(size_t i = 0; i < count; ++i) {
       float x, y, z;
-      uint nId;
+      unsigned int nId;
       pImpl->pRTPacket->Get3DNoLabelsMarker(i, x, y, z, nId);
       pointcloud_.row(i) << x / 1000.0, y / 1000.0, z / 1000.0;
     }
