@@ -16,7 +16,7 @@ then
     $DOCKER run --rm -v $(realpath $(dirname $0)/../..):/io quay.io/pypa/manylinux2014_x86_64 /io/tools/build/build-wheels.sh
 else
     # We are in the image, building!
-    yum install -y eigen3-devel
+    yum install -y boost-devel eigen3-devel
 
     cd /io
 

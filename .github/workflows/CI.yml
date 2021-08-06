@@ -78,7 +78,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install python@${{ matrix.python }} eigen
+          brew install python@${{ matrix.python }} eigen boost
           brew link --overwrite python@${{ matrix.python }}
           pip3 install cmake ninja wheel
       
