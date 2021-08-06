@@ -113,6 +113,11 @@ jobs:
         run: |
           pip install wheel
 
+      - name: Install boost
+        uses: MarkusJx/install-boost@v1.0.1
+        with:
+          boost_version: 1.73.0
+
       - name: Build
         run: python setup.py bdist_wheel
       
