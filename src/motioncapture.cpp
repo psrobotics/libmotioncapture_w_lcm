@@ -15,8 +15,6 @@
 #include "libmotioncapture/vrpn.h"
 #endif
 
-#include "yaml-cpp/yaml.h"
-
 namespace libmotioncapture {
 
   RigidBody MotionCapture::rigidBodyByName(
@@ -30,12 +28,10 @@ namespace libmotioncapture {
     throw std::runtime_error("Rigid body not found!");
   }
 
-  MotionCapture* MotionCapture::connect(const std::string &cfg)
+  MotionCapture* MotionCapture::connect(
+    const std::string& type,
+    const std::string& hostname)
   {
-    YAML::Node node = YAML::Load(cfg);
-
-    auto type = node["type"].as<std::string>();
-
     MotionCapture* mocap = nullptr;
 
     if (false)
@@ -45,16 +41,16 @@ namespace libmotioncapture {
     else if (type == "vicon")
     {
       mocap = new libmotioncapture::MotionCaptureVicon(
-        node["hostname"].as<std::string>(),
-        node["enable_objects"].as<bool>(true),
-        node["enable_pointcloud"].as<bool>(true));
+        hostname,
+        /*enable_objects*/ true,
+        /*enable_pointclout*/ true);
     }
 #endif
 #ifdef ENABLE_OPTITRACK
     else if (type == "optitrack")
     {
       mocap = new libmotioncapture::MotionCaptureOptitrack(
-        node["hostname"].as<std::string>());
+        hostname);
     }
 #endif
 #ifdef ENABLE_PHASESPACE
@@ -73,17 +69,17 @@ namespace libmotioncapture {
     else if (type == "qualisys")
     {
       mocap = new libmotioncapture::MotionCaptureQualisys(
-        node["hostname"].as<std::string>(),
-        node["port"].as<int>(),
-        node["enable_objects"].as<bool>(true),
-        node["enable_pointcloud"].as<bool>(true));
+        hostname,
+        /*port*/ 22222,
+        /*enable_objects*/ true,
+        /*enable_pointclout*/ true);  
     }
 #endif
 #ifdef ENABLE_VRPN
     else if (type == "vrpn")
     {
       mocap = new libmotioncapture::MotionCaptureVrpn(
-        node["hostname"].as<std::string>());
+        hostname);
     }
 #endif
     else
