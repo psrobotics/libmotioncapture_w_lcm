@@ -5,9 +5,6 @@
 #ifdef ENABLE_OPTITRACK
 #include "libmotioncapture/optitrack.h"
 #endif
-#ifdef ENABLE_PHASESPACE
-#include "libmotioncapture/phasespace.h"
-#endif
 #ifdef ENABLE_QUALISYS
 #include "libmotioncapture/qualisys.h"
 #endif
@@ -51,18 +48,6 @@ namespace libmotioncapture {
     {
       mocap = new libmotioncapture::MotionCaptureOptitrack(
         hostname);
-    }
-#endif
-#ifdef ENABLE_PHASESPACE
-    else if (type == "phasespace")
-    {
-      std::string ip;
-      int numMarkers;
-      nl.getParam("phasespace_ip", ip);
-      nl.getParam("phasespace_num_markers", numMarkers);
-      std::map<size_t, std::pair<int, int>> cfs;
-      cfs[231] = std::make_pair<int, int>(10, 11);
-      mocap = new libmotioncapture::MotionCapturePhasespace(ip, numMarkers, cfs);
     }
 #endif
 #ifdef ENABLE_QUALISYS

@@ -1,5 +1,4 @@
 build/*
-externalDependencies/phasespace_sdk/
 .vscode/
 dist/
 

@@ -6,7 +6,6 @@ option(BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
 option(ENABLE_QUALISYS "Enable Qualisys" ON)
 option(ENABLE_OPTITRACK "Enable Optitrack" ON)
 option(ENABLE_VICON "Enable Vicon" ON)
-option(ENABLE_PHASESPACE "Enable PhaseSpace" OFF)
 option(ENABLE_VRPN "Enable VRPN" ON)
 
 # Enable C++14
@@ -17,7 +16,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Eigen3 REQUIRED)
 
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vicon-datastream-sdk/)
-set(PHASESPACE_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/phasespace_sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/qualisys_cpp_sdk/)
 set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vrpn/)
 
@@ -63,27 +61,6 @@ if (ENABLE_OPTITRACK)
   set(my_files
     ${my_files}
     src/optitrack.cpp
-  )
-endif()
-
-if (ENABLE_PHASESPACE)
-  add_definitions(-DENABLE_PHASESPACE)
-  set(my_include_directories
-    ${my_include_directories}
-    ${PHASESPACE_SDK_DIR}/include
-  )
-  set(my_link_directories
-    ${my_link_directories}
-    ${PHASESPACE_SDK_DIR}/lib64
-  )
-  set(my_files
-    ${my_files}
-    src/phasespace.cpp
-  )
-  set(my_libraries
-    ${my_libraries}
-    owlsock
-    OWL
   )
 endif()
 

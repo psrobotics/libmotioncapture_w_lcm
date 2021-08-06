@@ -1,7 +1,7 @@
 [![CI](https://github.com/IMRCLab/libmotioncapture/actions/workflows/CI.yml/badge.svg)](https://github.com/IMRCLab/libmotioncapture/actions/workflows/CI.yml)
 
 # libmotioncapture
-Interface Abstraction for Motion Capture System APIs such as VICON, OptiTrack, Qualisys, PhaseSpace, or VRPN.
+Interface Abstraction for Motion Capture System APIs such as VICON, OptiTrack, Qualisys, or VRPN.
 
 This is a fork of https://github.com/USC-ACTLab/libmotioncapture/ with the following changes:
 
@@ -18,11 +18,7 @@ By default, `libmotioncapture` supports the following hardware:
 - OptiTrack - binary parsing over network (no dependency)
 - VRPN - SDK git submodule
 
-Support for following hardware requires additional action by the user:
-
-- Phasespace - manually obtain SDK and copy to `externalDependencies/phasespace_sdk/`.
-
-After setup, enable the appropriate compile flags in `CMakeLists.txt`.
+CMake flags can be used to disable individual systems in `CMakeLists.txt`.
 
 ## Prerequisites
 
