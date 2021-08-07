@@ -12,6 +12,8 @@ namespace libmotioncapture {
 
   typedef Eigen::Matrix<float, Eigen::Dynamic, 3> PointCloud;
 
+  const char* version();
+
   class RigidBody
   {
   public:

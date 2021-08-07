@@ -135,7 +135,7 @@ jobs:
   
   Publish:
     runs-on: ubuntu-20.04
-    needs: [Source, Linux, MacOS]#, Windows]
+    needs: [Source, Linux, MacOS, Windows]
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.guard == 'do-release' }}
 
     steps:    

@@ -27,7 +27,7 @@ using namespace pybind11::literals;
 
 PYBIND11_MODULE(motioncapture, m) {
 
-  // m.attr("__version__") = version();
+  m.attr("__version__") = version();
 
   m.def("connect", &MotionCapture::connect);
 

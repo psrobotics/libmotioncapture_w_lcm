@@ -14,6 +14,15 @@
 
 namespace libmotioncapture {
 
+  const char *version_string =
+    #include "../version"
+    ;
+
+  const char *version()
+  {
+    return version_string;
+  }
+
   RigidBody MotionCapture::rigidBodyByName(
       const std::string& name) const
   {
