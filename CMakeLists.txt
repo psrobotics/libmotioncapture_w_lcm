@@ -18,6 +18,7 @@ find_package(Boost 1.5 COMPONENTS system REQUIRED) # for optitrack
 add_definitions(
   -DBOOST_DATE_TIME_NO_LIB
   -DBOOST_REGEX_NO_LIB
+  -D_BUILD_STATIC_LIB
 )
 
 find_package(Eigen3 REQUIRED)
