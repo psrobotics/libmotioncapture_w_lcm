@@ -3,10 +3,18 @@
 # libmotioncapture
 Interface Abstraction for Motion Capture System APIs such as VICON, OptiTrack, Qualisys, or VRPN.
 
+This can be used as C++ library or Python package. For Python, use
+
+```
+pip install motioncapture
+```
+
+For C++, follow the instructions below.
+
 This is a fork of https://github.com/USC-ACTLab/libmotioncapture/ with the following changes:
 
 - Python bindings
-- Factory method that takes a yaml-string as input
+- Factory method
 - Refactored API
 - Support for VRPN by default
 
@@ -26,17 +34,6 @@ CMake flags can be used to disable individual systems in `CMakeLists.txt`.
 sudo apt install libboost-system-dev libboost-thread-dev libeigen3-dev ninja-build
 ```
 
-## Python
-
-```
-git submodule init
-git submodule update
-python3 setup.py develop --user
-python3 examples/python.py
-```
-
-Wheels for Linux and Mac are built by the CI. Those can be downloaded and installed using `pip install *.whl`.
-
 ## C++
 
 ```
@@ -45,4 +42,15 @@ git submodule update
 mkdir build
 cd build
 cmake ..
+```
+
+An example application is in `examples/main.cpp`.
+
+## Python (Development)
+
+```
+git submodule init
+git submodule update
+python3 setup.py develop --user
+python3 examples/python.py
 ```
