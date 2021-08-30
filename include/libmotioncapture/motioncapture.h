@@ -94,9 +94,9 @@ namespace libmotioncapture {
   class MotionCapture
   {
   public:
-    static MotionCapture* connect(
-      const std::string& type,
-      const std::string& hostname);
+    static MotionCapture *connect(
+      const std::string &type,
+      const std::map<std::string, std::string> &cfg);
 
     virtual ~MotionCapture()
     {

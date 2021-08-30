@@ -11,7 +11,9 @@ int main(int argc, char **argv)
   }
 
   // Make a new client
-  libmotioncapture::MotionCapture *mocap = libmotioncapture::MotionCapture::connect(argv[1], argv[2]);
+  std::map<std::string, std::string> cfg;
+  cfg["hostname"] = argv[2];
+  libmotioncapture::MotionCapture *mocap = libmotioncapture::MotionCapture::connect(argv[1], cfg);
 
   std::cout << "supportsRigidBodyTracking: " << mocap->supportsRigidBodyTracking() << std::endl;
   std::cout << "supportsLatencyEstimate: " << mocap->supportsLatencyEstimate() << std::endl;
