@@ -6,7 +6,7 @@ using boost::asio::ip::udp;
 
 namespace libmotioncapture {
 
-  constexpr int MAX_PACKETSIZE = 100000;  // max size of packet (actual packet size is dynamic)
+  constexpr int MAX_PACKETSIZE = 65503; // max size of packet (actual packet size is dynamic)
   constexpr int MAX_NAMELENGTH = 256;
 
   constexpr int NAT_CONNECT           = 0;
@@ -23,7 +23,7 @@ namespace libmotioncapture {
       , io_service()
       , socket(io_service)
       , sender_endpoint()
-      , data(20000)
+      , data(MAX_PACKETSIZE)
     {
     }
     // void getObjectByRigidbody(
@@ -127,14 +127,18 @@ namespace libmotioncapture {
             if ( major >= 3 )
             {
               int nMarkers = 0; memcpy( &nMarkers, ptr, 4 ); ptr += 4;
-
               // Marker positions
-              nBytes = nMarkers * 3 * sizeof( float );
+              nBytes = nMarkers * 3 * sizeof(float);
               ptr += nBytes;
-
               // Marker required active labels
-              nBytes = nMarkers * sizeof( int );
+              nBytes = nMarkers * sizeof(int);
               ptr += nBytes;
+              // Marker Name
+              if (major >= 4) {
+                for (int markerIdx = 0; markerIdx < nMarkers; ++markerIdx) {
+                  ptr += strlen(ptr) + 1;
+                }
+              }
             }
           }
           else if(type ==2)   // skeleton
@@ -289,7 +293,7 @@ namespace libmotioncapture {
     // query model def
     sRequest modelDefCmd = {NAT_REQUEST_MODELDEF, 0};
     socket_cmd.send_to(boost::asio::buffer(&modelDefCmd, sizeof(modelDefCmd)), endpoint_cmd);
-    std::vector<char> modelDef(20000);
+    std::vector<char> modelDef(MAX_PACKETSIZE);
     reply_length = socket_cmd.receive_from(
         boost::asio::buffer(modelDef.data(), modelDef.size()), sender_endpoint);
     modelDef.resize(reply_length);
@@ -320,7 +324,7 @@ namespace libmotioncapture {
   {
     // use a loop to get latest data
     do {
-      pImpl->data.resize(20000);
+      pImpl->data.resize(MAX_PACKETSIZE);
       size_t length = pImpl->socket.receive_from(boost::asio::buffer(pImpl->data.data(), pImpl->data.size()), pImpl->sender_endpoint);
       pImpl->data.resize(length);
     } while (pImpl->socket.available() > 0);
