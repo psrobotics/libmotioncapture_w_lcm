@@ -6,9 +6,6 @@ using boost::asio::ip::udp;
 
 namespace libmotioncapture {
 
-  constexpr const char* MULTICAST_ADDRESS = "239.255.42.99";
-  constexpr int PORT_COMMAND = 1510;
-  constexpr int PORT_DATA = 1511;
   constexpr int MAX_PACKETSIZE = 100000;  // max size of packet (actual packet size is dynamic)
   constexpr int MAX_NAMELENGTH = 256;
 
@@ -239,7 +236,10 @@ namespace libmotioncapture {
   };
 
   MotionCaptureOptitrack::MotionCaptureOptitrack(
-    const std::string& hostname)
+    const std::string &hostname,
+    const std::string &multicast_address,
+    int port_command,
+    int port_data)
   {
     pImpl = new MotionCaptureOptitrackImpl;
 
@@ -247,7 +247,7 @@ namespace libmotioncapture {
     boost::asio::io_service io_service_cmd;
     udp::socket socket_cmd(io_service_cmd, udp::endpoint(udp::v4(), 0));
     udp::resolver resolver_cmd(io_service_cmd);
-    udp::endpoint endpoint_cmd = *resolver_cmd.resolve({udp::v4(), hostname, std::to_string(PORT_COMMAND)});
+    udp::endpoint endpoint_cmd = *resolver_cmd.resolve({udp::v4(), hostname, std::to_string(port_command)});
 
     typedef struct
     {
@@ -296,19 +296,19 @@ namespace libmotioncapture {
     pImpl->parseModelDef(modelDef.data());
 
     // connect to data port to receive mocap data
-    auto listen_address = boost::asio::ip::address::from_string("0.0.0.0");
-    auto multicast_address = boost::asio::ip::address::from_string(MULTICAST_ADDRESS);
+    auto listen_address_boost = boost::asio::ip::address::from_string("0.0.0.0");
+    auto multicast_address_boost = boost::asio::ip::address::from_string(multicast_address);
 
     // Create the socket so that multiple may be bound to the same address.
     boost::asio::ip::udp::endpoint listen_endpoint(
-        listen_address, PORT_DATA);
+        listen_address_boost, port_data);
     pImpl->socket.open(listen_endpoint.protocol());
     pImpl->socket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
     pImpl->socket.bind(listen_endpoint);
 
     // Join the multicast group.
     pImpl->socket.set_option(
-        boost::asio::ip::multicast::join_group(multicast_address));
+        boost::asio::ip::multicast::join_group(multicast_address_boost));
   }
 
   const std::string & MotionCaptureOptitrack::version() const

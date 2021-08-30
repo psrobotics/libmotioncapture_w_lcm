@@ -7,7 +7,10 @@ namespace libmotioncapture {
   class MotionCaptureOptitrack : public MotionCapture{
   public:
     MotionCaptureOptitrack(
-      const std::string& hostname);
+      const std::string &hostname,
+      const std::string& multicast_address = "239.255.42.99",
+      int port_command = 1510,
+      int port_data = 1511);
 
     virtual ~MotionCaptureOptitrack();
 

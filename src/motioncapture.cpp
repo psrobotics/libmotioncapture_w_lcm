@@ -96,7 +96,10 @@ namespace libmotioncapture {
     else if (type == "optitrack")
     {
       mocap = new libmotioncapture::MotionCaptureOptitrack(
-        getString(cfg, "hostname", "localhost"));
+        getString(cfg, "hostname", "localhost"),
+        getString(cfg, "multicast_address", "239.255.42.99"),
+        getInt(cfg, "port_command", 1510),
+        getInt(cfg, "port_data", 1511));
     }
 #endif
 #ifdef ENABLE_QUALISYS
