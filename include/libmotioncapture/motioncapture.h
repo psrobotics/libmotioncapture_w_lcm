@@ -72,7 +72,7 @@ namespace libmotioncapture {
   {
   public:
     LatencyInfo(
-      std::string& name,
+      const std::string& name,
       double value)
       : m_name(name)
       , m_value(value)
@@ -165,6 +165,7 @@ namespace libmotioncapture {
     mutable std::map<std::string, RigidBody> rigidBodies_;
     mutable PointCloud pointcloud_;
     mutable std::vector<LatencyInfo> latencies_;
+    mutable uint64_t timestamp_;
   };
 
 } // namespace libobjecttracker

@@ -199,8 +199,7 @@ namespace libmotioncapture {
     std::string version;
     int versionMajor;
     int versionMinor;
-    // Point3f axisMultiplier;
-    // Point3f axisOrder;
+    uint64_t clockFrequency; // ticks/second for timestamps
 
     boost::asio::io_service io_service;
     boost::asio::ip::udp::socket socket;
@@ -263,9 +262,13 @@ namespace libmotioncapture {
     {
       unsigned short iMessage;
       unsigned short nDataBytes;
-      char szName[256];
-      unsigned char Version[4];
-      unsigned char NatNetVersion[4];
+      char szName[MAX_NAMELENGTH];      // host app's name
+      unsigned char Version[4];         // host app's version [major.minor.build.revision]
+      unsigned char NatNetVersion[4];   // host app's NatNet version [major.minor.build.revision]
+      uint64_t HighResClockFrequency;   // host's high resolution clock frequency (ticks per second)
+      uint16_t DataPort;
+      bool IsMulticast;
+      uint8_t MulticastGroupAddress[4];
     } sResponse;
 
     sRequest connectCmd = {NAT_CONNECT, 0};
@@ -289,6 +292,7 @@ namespace libmotioncapture {
 
     pImpl->versionMajor = response.NatNetVersion[0];
     pImpl->versionMinor = response.NatNetVersion[1];
+    pImpl->clockFrequency = response.HighResClockFrequency;
 
     // query model def
     sRequest modelDefCmd = {NAT_REQUEST_MODELDEF, 0};
@@ -600,22 +604,31 @@ namespace libmotioncapture {
         // printf("Timestamp : %3.3f\n", timestamp);
 
         // high res timestamps (version 3.0 and later)
+        latencies_.clear();
         if ( (major >= 3) || (major == 0) )
         {
-          // uint64_t cameraMidExposureTimestamp = 0;
-          // memcpy( &cameraMidExposureTimestamp, ptr, 8 );
+          uint64_t cameraMidExposureTimestamp = 0;
+          memcpy( &cameraMidExposureTimestamp, ptr, 8 );
           ptr += 8;
-          // printf( "Mid-exposure timestamp : %" PRIu64"\n", cameraMidExposureTimestamp );
 
-          // uint64_t cameraDataReceivedTimestamp = 0;
-          // memcpy( &cameraDataReceivedTimestamp, ptr, 8 );
+          uint64_t cameraDataReceivedTimestamp = 0;
+          memcpy( &cameraDataReceivedTimestamp, ptr, 8 );
           ptr += 8;
-          // printf( "Camera data received timestamp : %" PRIu64"\n", cameraDataReceivedTimestamp );
 
-          // uint64_t transmitTimestamp = 0;
-          // memcpy( &transmitTimestamp, ptr, 8 );
+          uint64_t transmitTimestamp = 0;
+          memcpy( &transmitTimestamp, ptr, 8 );
           ptr += 8;
-          // printf( "Transmit timestamp : %" PRIu64"\n", transmitTimestamp );
+
+          const uint64_t cameraLatencyTicks = cameraDataReceivedTimestamp - cameraMidExposureTimestamp;
+          const double cameraLatencyMs = (cameraLatencyTicks * 1000) / (double)pImpl->clockFrequency;
+          latencies_.emplace_back(LatencyInfo("Camera", cameraLatencyMs));
+
+          const uint64_t swLatencyTicks = transmitTimestamp - cameraDataReceivedTimestamp;
+          const double swLatencyMs = (swLatencyTicks * 1000) / (double)pImpl->clockFrequency;
+          latencies_.emplace_back(LatencyInfo("Motive", cameraLatencyMs));
+
+          // convert actual shutter timestamp to microseconds
+          timestamp_ = cameraMidExposureTimestamp * 1e6 / pImpl->clockFrequency;
         }
 
         // frame params
@@ -670,6 +683,16 @@ namespace libmotioncapture {
       pointcloud_.row(r) << marker.x, marker.y, marker.z;
     }
     return pointcloud_;
+  }
+
+  const std::vector<LatencyInfo> &MotionCaptureOptitrack::latency() const
+  {
+    return latencies_;
+  }
+
+  uint64_t MotionCaptureOptitrack::timeStamp() const
+  {
+    return timestamp_;
   }
 
   MotionCaptureOptitrack::~MotionCaptureOptitrack()
