@@ -379,8 +379,13 @@ namespace libmotioncapture {
         // Loop through unlabeled markers
         // OtherMarker list is Deprecated
         int nOtherMarkers = 0; memcpy(&nOtherMarkers, ptr, 4); ptr += 4;
-        // printf("Unidentified Marker Count : %d\n", nOtherMarkers);
-        ptr += nOtherMarkers * 12;
+        pImpl->markers.resize(nOtherMarkers);
+        for (int j = 0; j < nOtherMarkers; j++)
+        {
+          memcpy(&pImpl->markers[j].x, ptr, 4); ptr += 4;
+          memcpy(&pImpl->markers[j].y, ptr, 4); ptr += 4;
+          memcpy(&pImpl->markers[j].z, ptr, 4); ptr += 4;
+        }
 
         // Loop through rigidbodies
         int nRigidBodies = 0; memcpy(&nRigidBodies, ptr, 4); ptr += 4;
@@ -461,7 +466,7 @@ namespace libmotioncapture {
         {
           int nLabeledMarkers = 0;
           memcpy(&nLabeledMarkers, ptr, 4); ptr += 4;
-          pImpl->markers.resize(nLabeledMarkers);
+          pImpl->markers.resize(nOtherMarkers + nLabeledMarkers);
           // printf("Labeled Marker Count : %d\n", nLabeledMarkers);
 
           // Loop through labeled markers
@@ -482,9 +487,9 @@ namespace libmotioncapture {
             // int modelID, markerID;
             // DecodeMarkerID(ID, &modelID, &markerID);
 
-            memcpy(&pImpl->markers[j].x, ptr, 4); ptr += 4;
-            memcpy(&pImpl->markers[j].y, ptr, 4); ptr += 4;
-            memcpy(&pImpl->markers[j].z, ptr, 4); ptr += 4;
+            memcpy(&pImpl->markers[nOtherMarkers + j].x, ptr, 4); ptr += 4;
+            memcpy(&pImpl->markers[nOtherMarkers + j].y, ptr, 4); ptr += 4;
+            memcpy(&pImpl->markers[nOtherMarkers + j].z, ptr, 4); ptr += 4;
             // size
             //float size = 0.0f; memcpy(&size, ptr, 4);
             ptr += 4;
