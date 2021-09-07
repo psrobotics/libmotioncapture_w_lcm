@@ -5,14 +5,18 @@
 
 int main(int argc, char **argv)
 {
-  if (argc != 3) {
-    std::cerr << "Use ./motioncapture_example <type> <hostname>" << std::endl;
+  if (argc < 3) {
+    std::cerr << "Use ./motioncapture_example <type> <hostname> [option1] [value1] ..." << std::endl;
     return 1;
   }
 
   // Make a new client
   std::map<std::string, std::string> cfg;
   cfg["hostname"] = argv[2];
+  for (int i = 3; i+1 < argc; i+=2) {
+    cfg[argv[i]] = argv[i+1];
+  }
+
   libmotioncapture::MotionCapture *mocap = libmotioncapture::MotionCapture::connect(argv[1], cfg);
 
   std::cout << "supportsRigidBodyTracking: " << mocap->supportsRigidBodyTracking() << std::endl;
