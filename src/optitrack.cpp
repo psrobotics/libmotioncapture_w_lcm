@@ -240,9 +240,7 @@ namespace libmotioncapture {
 
   MotionCaptureOptitrack::MotionCaptureOptitrack(
     const std::string &hostname,
-    const std::string &multicast_address,
-    int port_command,
-    int port_data)
+    int port_command)
   {
     pImpl = new MotionCaptureOptitrackImpl;
 
@@ -265,7 +263,7 @@ namespace libmotioncapture {
       char szName[MAX_NAMELENGTH];      // host app's name
       unsigned char Version[4];         // host app's version [major.minor.build.revision]
       unsigned char NatNetVersion[4];   // host app's NatNet version [major.minor.build.revision]
-      uint64_t HighResClockFrequency;   // host's high resolution clock frequency (ticks per second)
+      uint8_t HighResClockFrequency[8];   // host's high resolution clock frequency (ticks per second)
       uint16_t DataPort;
       bool IsMulticast;
       uint8_t MulticastGroupAddress[4];
@@ -292,7 +290,19 @@ namespace libmotioncapture {
 
     pImpl->versionMajor = response.NatNetVersion[0];
     pImpl->versionMinor = response.NatNetVersion[1];
-    pImpl->clockFrequency = response.HighResClockFrequency;
+    memcpy(&pImpl->clockFrequency, response.HighResClockFrequency, sizeof(uint64_t));
+
+    if (!response.IsMulticast) {
+      throw std::runtime_error("Motive does not use multicast. Please update your streaming settings!");
+    }
+
+    std::stringstream sstr;
+    sstr << (int)response.MulticastGroupAddress[0] << "."
+         << (int)response.MulticastGroupAddress[1] << "."
+         << (int)response.MulticastGroupAddress[2] << "."
+         << (int)response.MulticastGroupAddress[3];
+    std::string multicast_address = sstr.str();
+    uint16_t port_data = response.DataPort;
 
     // query model def
     sRequest modelDefCmd = {NAT_REQUEST_MODELDEF, 0};
