@@ -32,7 +32,12 @@ int main(int argc, char **argv)
     std::cout << "frame " << frameId << std::endl;
     if (mocap->supportsTimeStamp()) {
       std::cout << "  timestamp: " << mocap->timeStamp() << " us" << std::endl;
-
+    }
+    if (mocap->supportsLatencyEstimate()) {
+      std::cout << "  latency: " << std::endl;
+      for (const auto& latency : mocap->latency()) {
+        std::cout << "    " << latency.name() << " " << latency.value() << " ms" << std::endl;
+      }
     }
 
     if (mocap->supportsPointCloud()) {

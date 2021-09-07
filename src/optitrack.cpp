@@ -625,7 +625,7 @@ namespace libmotioncapture {
 
           const uint64_t swLatencyTicks = transmitTimestamp - cameraDataReceivedTimestamp;
           const double swLatencyMs = (swLatencyTicks * 1000) / (double)pImpl->clockFrequency;
-          latencies_.emplace_back(LatencyInfo("Motive", cameraLatencyMs));
+          latencies_.emplace_back(LatencyInfo("Motive", swLatencyMs));
 
           // convert actual shutter timestamp to microseconds
           timestamp_ = cameraMidExposureTimestamp * 1e6 / pImpl->clockFrequency;
