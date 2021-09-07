@@ -111,7 +111,7 @@ namespace libmotioncapture {
         data.second.quat[2]  // z
         );
 
-      rigidBodies_[data.first] = RigidBody(data.first, position, rotation);
+      rigidBodies_.emplace(data.first, RigidBody(data.first, position, rotation));
     }
     return rigidBodies_;
   }
@@ -135,7 +135,7 @@ namespace libmotioncapture {
 
       return RigidBody(name, position, rotation);
     }
-    return RigidBody(name);
+    throw std::runtime_error("Unknown rigid body!");
   }
 
 }

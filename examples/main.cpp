@@ -58,15 +58,12 @@ int main(int argc, char **argv)
         const auto& rigidBody = item.second;
 
         std::cout << "    \"" << rigidBody.name() << "\":" << std::endl;
-        std::cout << "     occluded: " << rigidBody.occluded() << std::endl;
 
-        if (rigidBody.occluded() == false) {
-          const auto& position = rigidBody.position();
-          const auto& rotation = rigidBody.rotation();
-          std::cout << "         position: [" << position(0) << ", " << position(1) << ", " << position(2) << "]" << std::endl;
-          std::cout << "         rotation: [" << rotation.w() << ", " << rotation.vec()(0) << ", "
-                                              << rotation.vec()(1) << ", " << rotation.vec()(2) << "]" << std::endl;
-        }
+        const auto& position = rigidBody.position();
+        const auto& rotation = rigidBody.rotation();
+        std::cout << "       position: [" << position(0) << ", " << position(1) << ", " << position(2) << "]" << std::endl;
+        std::cout << "       rotation: [" << rotation.w() << ", " << rotation.vec()(0) << ", "
+                                            << rotation.vec()(1) << ", " << rotation.vec()(2) << "]" << std::endl;
       }
     }
   }

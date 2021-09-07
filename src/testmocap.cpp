@@ -22,10 +22,10 @@ namespace libmotioncapture {
     pImpl = new MotionCaptureTestImpl;
     pImpl->dt = dt;
     for (const auto& obj : objects) {
-      rigidBodies_[obj.name()] = obj;
+      rigidBodies_.insert(std::make_pair(obj.name(), obj));
     }
     Eigen::Quaternionf q(0,0,0,1); 
-    rigidBodies_["test"] = RigidBody("test", Eigen::Vector3f(0,1,2), q);
+    rigidBodies_.emplace("test", RigidBody("test", Eigen::Vector3f(0,1,2), q));
     // pointcloud_ = pointCloud;
   }
 

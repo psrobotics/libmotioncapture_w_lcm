@@ -678,7 +678,7 @@ namespace libmotioncapture {
           rb.qy, // y
           rb.qz  // z
           );
-        rigidBodies_[def.name] = RigidBody(def.name, position, rotation);
+        rigidBodies_.emplace(def.name, RigidBody(def.name, position, rotation));
       }
     }
     return rigidBodies_;

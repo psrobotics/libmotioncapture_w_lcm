@@ -42,8 +42,7 @@ PYBIND11_MODULE(motioncapture, m) {
   py::class_<RigidBody>(m, "RigidBody")
       .def_property_readonly("name", &RigidBody::name)
       .def_property_readonly("position", &RigidBody::position)
-      .def_property_readonly("rotation", &RigidBody::rotation)
-      .def_property_readonly("occluded", &RigidBody::occluded);
+      .def_property_readonly("rotation", &RigidBody::rotation);
 
   py::class_<MotionCaptureTest>(m, "MotionCaptureTest")
       .def(py::init<float, const std::vector<RigidBody>&>())//, const pcl::PointCloud<pcl::PointXYZ>::Ptr>())

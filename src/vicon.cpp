@@ -70,7 +70,7 @@ namespace libmotioncapture {
     size_t count = pImpl->client.GetSubjectCount().SubjectCount;
     for (size_t i = 0; i < count; ++i) {
       const std::string name = pImpl->client.GetSubjectName(i).SubjectName;
-      rigidBodies_[name] = rigidBodyByName(name);
+      rigidBodies_.emplace(name, rigidBodyByName(name));
     }
     return rigidBodies_;
   }
@@ -98,9 +98,8 @@ namespace libmotioncapture {
         );
 
       return RigidBody(name, position, rotation);
-    } else {
-      return RigidBody(name);
     }
+    throw std::runtime_error("Unknown rigid body!");
   }
 
   const PointCloud& MotionCaptureVicon::pointCloud() const

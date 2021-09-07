@@ -24,24 +24,6 @@ namespace libmotioncapture {
       : m_name(name)
       , m_position(position)
       , m_rotation(rotation)
-      , m_occluded(false)
-    {
-    }
-
-    RigidBody(
-      const std::string& name)
-      : m_name(name)
-      , m_position()
-      , m_rotation()
-      , m_occluded(true)
-    {
-    }
-
-    RigidBody()
-      : m_name()
-      , m_position()
-      , m_rotation()
-      , m_occluded(true)
     {
     }
 
@@ -57,15 +39,10 @@ namespace libmotioncapture {
       return m_rotation;
     }
 
-    bool occluded() const {
-      return m_occluded;
-    }
-
   private:
     std::string m_name;
     Eigen::Vector3f m_position;
     Eigen::Quaternionf m_rotation;
-    bool m_occluded;
   };
 
   class LatencyInfo

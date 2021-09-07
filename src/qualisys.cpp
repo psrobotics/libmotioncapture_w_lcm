@@ -93,9 +93,7 @@ namespace libmotioncapture {
     for(size_t i = 0; i < count; ++i) {
       std::string name = std::string(pImpl->poRTProtocol.Get6DOFBodyName(i));
       pImpl->pRTPacket->Get6DOFEulerBody(i, pos[0], pos[1], pos[2], rx, ry, rz);
-      if (std::isnan(pos[0])) {
-        rigidBodies_[name] = RigidBody(name);
-      } else {
+      if (!std::isnan(pos[0])) {
         Eigen::Vector3f position = Eigen::Vector3f(pos) / 1000.0;
 
         Eigen::Matrix3f rotation;
@@ -104,7 +102,7 @@ namespace libmotioncapture {
                  * Eigen::AngleAxisf((rz/180.0f)*M_PI, Eigen::Vector3f::UnitZ());
         Eigen::Quaternionf quaternion = Eigen::Quaternionf(rotation);
 
-        rigidBodies_[name] = RigidBody(name, position, quaternion);
+        rigidBodies_.emplace(name, RigidBody(name, position, quaternion));
       }
     }
     return rigidBodies_;
@@ -127,9 +125,7 @@ namespace libmotioncapture {
 
       pImpl->pRTPacket->Get6DOFEulerBody(bodyId, pos[0], pos[1], pos[2], rx, ry, rz);
 
-      if (std::isnan(pos[0])) {
-        return RigidBody(name);
-      } else {
+      if (!std::isnan(pos[0])) {
         Eigen::Vector3f position = Eigen::Vector3f(pos) / 1000.0;
 
         Eigen::Matrix3f rotation;
@@ -140,9 +136,8 @@ namespace libmotioncapture {
 
         return RigidBody(name, position, quaternion);
       }
-    } else {
-      return RigidBody(name);
     }
+    throw std::runtime_error("Unknown rigid body!");
   }
 
   const PointCloud& MotionCaptureQualisys::pointCloud() const
