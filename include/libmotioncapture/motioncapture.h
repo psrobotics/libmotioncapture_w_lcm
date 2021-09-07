@@ -60,6 +60,7 @@ namespace libmotioncapture {
       return m_name;
     }
 
+    // seconds
     double value() const {
       return m_value;
     }

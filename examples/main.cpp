@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     if (mocap->supportsLatencyEstimate()) {
       std::cout << "  latency: " << std::endl;
       for (const auto& latency : mocap->latency()) {
-        std::cout << "    " << latency.name() << " " << latency.value() << " ms" << std::endl;
+        std::cout << "    " << latency.name() << " " << latency.value() << " s" << std::endl;
       }
     }
 
