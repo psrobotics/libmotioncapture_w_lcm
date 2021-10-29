@@ -11,3 +11,6 @@
 [submodule "externalDependencies/vrpn"]
 	path = externalDependencies/vrpn
 	url = https://github.com/vrpn/vrpn.git
+[submodule "externalDependencies/NatNetSDKCrossplatform"]
+	path = externalDependencies/NatNetSDKCrossplatform
+	url = https://github.com/whoenig/NatNetSDKCrossplatform.git

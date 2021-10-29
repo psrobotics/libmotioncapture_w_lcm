@@ -44,7 +44,11 @@ cd build
 cmake ..
 ```
 
-An example application is in `examples/main.cpp`.
+An example application is in `examples/main.cpp`. Run it using
+
+```
+./motioncapture_example <mocap type> <ip address>
+```
 
 ## Python (Development)
 

@@ -5,6 +5,7 @@ project(libmotioncapture)
 option(BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
 option(ENABLE_QUALISYS "Enable Qualisys" ON)
 option(ENABLE_OPTITRACK "Enable Optitrack" ON)
+option(ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
 option(ENABLE_VICON "Enable Vicon" ON)
 option(ENABLE_VRPN "Enable VRPN" ON)
 option(BUILD_EXAMPLE "Enable Example application" ON)
@@ -25,6 +26,7 @@ find_package(Eigen3 REQUIRED)
 
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vicon-datastream-sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/qualisys_cpp_sdk/)
+set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/NatNetSDKCrossplatform/)
 set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vrpn/)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -47,7 +49,7 @@ set(my_files
 
 if (ENABLE_VICON)
   add_definitions(-DENABLE_VICON)
-  add_subdirectory(externalDependencies/vicon-datastream-sdk)
+  add_subdirectory(externalDependencies/vicon-datastream-sdk EXCLUDE_FROM_ALL)
   set(my_include_directories
     ${my_include_directories}
     ${VICON_SDK_DIR}/Vicon/CrossMarket/DataStream
@@ -73,9 +75,29 @@ if (ENABLE_OPTITRACK)
   )
 endif()
 
+if (ENABLE_OPTITRACK_CLOSED_SOURCE)
+  add_definitions(-DENABLE_OPTITRACK_CLOSED_SOURCE)
+  add_subdirectory(externalDependencies/NatNetSDKCrossplatform EXCLUDE_FROM_ALL)
+  set(my_include_directories
+    ${my_include_directories}
+    ${NATNET_SDK_DIR}/include
+  )
+  set(my_files
+    ${my_files}
+    src/optitrack_closed_source.cpp
+  )
+  set(my_link_directories
+    ${NATNET_SDK_DIR}/lib/ubuntu
+  )
+  set(my_libraries
+    ${my_libraries}
+    NatNet
+  )
+endif()
+
 if (ENABLE_QUALISYS)
   add_definitions(-DENABLE_QUALISYS)
-  add_subdirectory(externalDependencies/qualisys_cpp_sdk)
+  add_subdirectory(externalDependencies/qualisys_cpp_sdk EXCLUDE_FROM_ALL)
   set(my_include_directories
     ${my_include_directories}
     ${QUALISYS_DIR}
@@ -93,7 +115,7 @@ endif()
 if (ENABLE_VRPN)
   add_definitions(-DENABLE_VRPN)
   option(VRPN_BUILD_CLIENT_LIBRARY "" ON)
-  add_subdirectory(externalDependencies/vrpn)
+  add_subdirectory(externalDependencies/vrpn EXCLUDE_FROM_ALL)
   set(my_include_directories
     ${my_include_directories}
     ${VRPN_DIR}
@@ -131,7 +153,7 @@ set(LIBMOTIONCAPTURE_LINK_DIR ${my_link_directories} CACHE STRING "link director
 
 if (BUILD_PYTHON_BINDINGS)
   # Python bindings
-  add_subdirectory(externalDependencies/pybind11)
+  add_subdirectory(externalDependencies/pybind11 EXCLUDE_FROM_ALL)
   # find_package(Python COMPONENTS Interpreter Development)
   # find_package(pybind11 CONFIG)
 
