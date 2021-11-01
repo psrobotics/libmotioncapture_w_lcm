@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.5)
 project(libmotioncapture)
 
 # define some options
-option(BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
-option(ENABLE_QUALISYS "Enable Qualisys" ON)
-option(ENABLE_OPTITRACK "Enable Optitrack" ON)
-option(ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
-option(ENABLE_VICON "Enable Vicon" ON)
-option(ENABLE_VRPN "Enable VRPN" ON)
-option(BUILD_EXAMPLE "Enable Example application" ON)
+option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
+option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" ON)
+option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" ON)
+option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
+option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" ON)
+option(LIBMOTIONCAPTURE_BUILD_EXAMPLE "Enable Example application" ON)
 
 # Enable C++14
 set(CMAKE_CXX_STANDARD 14)
@@ -47,7 +47,7 @@ set(my_files
   src/testmocap.cpp
 )
 
-if (ENABLE_VICON)
+if (LIBMOTIONCAPTURE_ENABLE_VICON)
   add_definitions(-DENABLE_VICON)
   add_subdirectory(externalDependencies/vicon-datastream-sdk EXCLUDE_FROM_ALL)
   set(my_include_directories
@@ -64,7 +64,7 @@ if (ENABLE_VICON)
   )
 endif()
 
-if (ENABLE_OPTITRACK)
+if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
   add_definitions(-DENABLE_OPTITRACK)
   set(my_include_directories
     ${my_include_directories}
@@ -75,7 +75,7 @@ if (ENABLE_OPTITRACK)
   )
 endif()
 
-if (ENABLE_OPTITRACK_CLOSED_SOURCE)
+if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE)
   add_definitions(-DENABLE_OPTITRACK_CLOSED_SOURCE)
   add_subdirectory(externalDependencies/NatNetSDKCrossplatform EXCLUDE_FROM_ALL)
   set(my_include_directories
@@ -95,7 +95,7 @@ if (ENABLE_OPTITRACK_CLOSED_SOURCE)
   )
 endif()
 
-if (ENABLE_QUALISYS)
+if (LIBMOTIONCAPTURE_ENABLE_QUALISYS)
   add_definitions(-DENABLE_QUALISYS)
   add_subdirectory(externalDependencies/qualisys_cpp_sdk EXCLUDE_FROM_ALL)
   set(my_include_directories
@@ -112,7 +112,7 @@ if (ENABLE_QUALISYS)
   )
 endif()
 
-if (ENABLE_VRPN)
+if (LIBMOTIONCAPTURE_ENABLE_VRPN)
   add_definitions(-DENABLE_VRPN)
   option(VRPN_BUILD_CLIENT_LIBRARY "" ON)
   add_subdirectory(externalDependencies/vrpn EXCLUDE_FROM_ALL)
@@ -135,23 +135,21 @@ include_directories(
   ${my_include_directories}
 )
 
-link_directories(
-  ${my_link_directories}
-)
-
 ## Declare a cpp library
 add_library(libmotioncapture
   ${my_files}
 )
 
 ## Specify libraries to link a library or executable target against
+target_link_directories(libmotioncapture PUBLIC
+  ${my_link_directories}
+)
 target_link_libraries(libmotioncapture
   ${my_libraries}
 )
 set_property(TARGET libmotioncapture PROPERTY POSITION_INDEPENDENT_CODE ON)
-set(LIBMOTIONCAPTURE_LINK_DIR ${my_link_directories} CACHE STRING "link directories for libmotioncapture")
 
-if (BUILD_PYTHON_BINDINGS)
+if (LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS)
   # Python bindings
   add_subdirectory(externalDependencies/pybind11 EXCLUDE_FROM_ALL)
   # find_package(Python COMPONENTS Interpreter Development)
@@ -167,7 +165,7 @@ if (BUILD_PYTHON_BINDINGS)
   )
 endif()
 
-if (BUILD_EXAMPLE)
+if (LIBMOTIONCAPTURE_BUILD_EXAMPLE)
   add_executable(motioncapture_example
     examples/main.cpp
   )
