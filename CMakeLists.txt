@@ -24,10 +24,10 @@ add_definitions(
 
 find_package(Eigen3 REQUIRED)
 
-set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vicon-datastream-sdk/)
-set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/qualisys_cpp_sdk/)
-set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/NatNetSDKCrossplatform/)
-set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externalDependencies/vrpn/)
+set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vicon-datastream-sdk/)
+set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/qualisys_cpp_sdk/)
+set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/NatNetSDKCrossplatform/)
+set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vrpn/)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -49,7 +49,7 @@ set(my_files
 
 if (LIBMOTIONCAPTURE_ENABLE_VICON)
   add_definitions(-DENABLE_VICON)
-  add_subdirectory(externalDependencies/vicon-datastream-sdk EXCLUDE_FROM_ALL)
+  add_subdirectory(deps/vicon-datastream-sdk EXCLUDE_FROM_ALL)
   set(my_include_directories
     ${my_include_directories}
     ${VICON_SDK_DIR}/Vicon/CrossMarket/DataStream
@@ -77,7 +77,7 @@ endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE)
   add_definitions(-DENABLE_OPTITRACK_CLOSED_SOURCE)
-  add_subdirectory(externalDependencies/NatNetSDKCrossplatform EXCLUDE_FROM_ALL)
+  add_subdirectory(deps/NatNetSDKCrossplatform EXCLUDE_FROM_ALL)
   set(my_include_directories
     ${my_include_directories}
     ${NATNET_SDK_DIR}/include
@@ -97,7 +97,7 @@ endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_QUALISYS)
   add_definitions(-DENABLE_QUALISYS)
-  add_subdirectory(externalDependencies/qualisys_cpp_sdk EXCLUDE_FROM_ALL)
+  add_subdirectory(deps/qualisys_cpp_sdk EXCLUDE_FROM_ALL)
   set(my_include_directories
     ${my_include_directories}
     ${QUALISYS_DIR}
@@ -115,7 +115,7 @@ endif()
 if (LIBMOTIONCAPTURE_ENABLE_VRPN)
   add_definitions(-DENABLE_VRPN)
   option(VRPN_BUILD_CLIENT_LIBRARY "" ON)
-  add_subdirectory(externalDependencies/vrpn EXCLUDE_FROM_ALL)
+  add_subdirectory(deps/vrpn EXCLUDE_FROM_ALL)
   set(my_include_directories
     ${my_include_directories}
     ${VRPN_DIR}
@@ -151,7 +151,7 @@ set_property(TARGET libmotioncapture PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 if (LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS)
   # Python bindings
-  add_subdirectory(externalDependencies/pybind11 EXCLUDE_FROM_ALL)
+  add_subdirectory(deps/pybind11 EXCLUDE_FROM_ALL)
   # find_package(Python COMPONENTS Interpreter Development)
   # find_package(pybind11 CONFIG)
 
