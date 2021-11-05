@@ -10,7 +10,7 @@
 
 namespace libmotioncapture {
 
-  typedef Eigen::Matrix<float, Eigen::Dynamic, 3> PointCloud;
+  typedef Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor> PointCloud;
 
   const char* version();
 
