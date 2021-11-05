@@ -100,6 +100,7 @@ namespace libmotioncapture {
     {
       mocap = new libmotioncapture::MotionCaptureOptitrack(
         getString(cfg, "hostname", "localhost"),
+        getString(cfg, "interface_ip", "0.0.0.0"),
         getInt(cfg, "port_command", 1510));
     }
 #endif

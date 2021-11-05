@@ -8,6 +8,7 @@ namespace libmotioncapture {
   public:
     MotionCaptureOptitrack(
       const std::string &hostname,
+      const std::string& interface_ip = "0.0.0.0",
       int port_command = 1510);
 
     virtual ~MotionCaptureOptitrack();
