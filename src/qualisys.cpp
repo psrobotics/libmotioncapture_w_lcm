@@ -35,7 +35,7 @@ namespace libmotioncapture {
       sstr << "Error connecting QTM on address: " << hostname << ":" << basePort;
       throw std::runtime_error(sstr.str());
     }
-    pImpl->pRTPacket = pImpl->poRTProtocol.GetRTPacket();
+    pImpl->pRTPacket = nullptr;
 
     // Setting component flag
     pImpl->componentType = static_cast<CRTPacket::EComponentType>(0);
@@ -50,7 +50,13 @@ namespace libmotioncapture {
     bool dataAvailable;
     pImpl->poRTProtocol.Read6DOFSettings(dataAvailable);
 
-    // TODO: enable UDP streaming of selected component for lower latency?
+    // Enable UDP streaming of selected component
+    unsigned short udpPort = 6734;
+    if (!pImpl->poRTProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, udpPort, NULL, pImpl->componentType)) {
+      std::stringstream sstr;
+      sstr << "Error streaming on port " << udpPort;
+      throw std::runtime_error(sstr.str());
+    }
 
     // Getting version
     char qtmVersion[255];
@@ -74,13 +80,15 @@ namespace libmotioncapture {
 
   void MotionCaptureQualisys::waitForNextFrame()
   {
-    CRTPacket::EPacketType eType;
-
-    pImpl->poRTProtocol.GetCurrentFrame(pImpl->componentType);
-
+    CRTPacket::EPacketType packetType;
     do {
-      pImpl->poRTProtocol.ReceiveRTPacket(eType, true);
-    } while(eType != CRTPacket::PacketData);
+      auto result = pImpl->poRTProtocol.Receive(packetType, true, -1);
+      if (result == CNetwork::ResponseType::success
+          && packetType == CRTPacket::PacketData) {
+        pImpl->pRTPacket = pImpl->poRTProtocol.GetRTPacket();
+        break;
+      }
+    } while(true);
   }
 
   const std::map<std::string, RigidBody>& MotionCaptureQualisys::rigidBodies() const
