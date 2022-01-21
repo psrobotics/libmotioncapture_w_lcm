@@ -7,6 +7,7 @@ option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" ON)
 option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" ON)
 option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
+option(LIBMOTIONCAPTURE_ENABLE_NOKOV "Enable Nokov" ON)
 option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" ON)
 option(LIBMOTIONCAPTURE_BUILD_EXAMPLE "Enable Example application" ON)
 
@@ -27,6 +28,7 @@ find_package(Eigen3 REQUIRED)
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vicon-datastream-sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/qualisys_cpp_sdk/)
 set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/NatNetSDKCrossplatform/)
+set(NOKOV_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/nokov_sdk/)
 set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vrpn/)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -112,6 +114,26 @@ if (LIBMOTIONCAPTURE_ENABLE_QUALISYS)
   )
 endif()
 
+if (LIBMOTIONCAPTURE_ENABLE_NOKOV)
+  add_definitions(-DENABLE_NOKOV)
+  set(my_include_directories
+    ${my_include_directories}
+    ${NOKOV_SDK_DIR}/include
+  )
+  set(my_files
+    ${my_files}
+    src/nokov.cpp
+  )
+  set(my_link_directories
+    ${my_link_directories}
+    ${NOKOV_SDK_DIR}/lib
+)
+  set(my_libraries
+    ${my_libraries}
+    SeekerSDKClient
+  )
+endif()
+
 if (LIBMOTIONCAPTURE_ENABLE_VRPN)
   add_definitions(-DENABLE_VRPN)
   option(VRPN_BUILD_CLIENT_LIBRARY "" ON)
@@ -174,3 +196,4 @@ if (LIBMOTIONCAPTURE_BUILD_EXAMPLE)
   )
 
 endif()
+
