@@ -28,9 +28,10 @@ namespace libmotioncapture {
     bool enablePointcloud)
   {
     pImpl = new MotionCaptureQualisysImpl;
+    unsigned short udpPort = 6734;
 
     // Connecting ...
-    if (!pImpl->poRTProtocol.Connect((char*)hostname.c_str(), basePort, 0, 1, 7)) {
+    if (!pImpl->poRTProtocol.Connect((char*)hostname.c_str(), basePort, &udpPort, 1, 19)) {
       std::stringstream sstr;
       sstr << "Error connecting QTM on address: " << hostname << ":" << basePort;
       throw std::runtime_error(sstr.str());
@@ -40,10 +41,10 @@ namespace libmotioncapture {
     // Setting component flag
     pImpl->componentType = static_cast<CRTPacket::EComponentType>(0);
     if (enableObjects) {
-      pImpl->componentType = static_cast<CRTPacket::EComponentType>(pImpl->componentType | CRTPacket::Component6dEuler);
+      pImpl->componentType = static_cast<CRTPacket::EComponentType>(pImpl->componentType | CRTProtocol::cComponent6dEuler);
     }
     if (enablePointcloud) {
-      pImpl->componentType = static_cast<CRTPacket::EComponentType>(pImpl->componentType | CRTPacket::Component3dNoLabels);
+      pImpl->componentType = static_cast<CRTPacket::EComponentType>(pImpl->componentType | CRTProtocol::cComponent3dNoLabels);
     }
 
     // Get 6DOF settings
@@ -51,7 +52,6 @@ namespace libmotioncapture {
     pImpl->poRTProtocol.Read6DOFSettings(dataAvailable);
 
     // Enable UDP streaming of selected component
-    unsigned short udpPort = 6734;
     if (!pImpl->poRTProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, udpPort, NULL, pImpl->componentType)) {
       std::stringstream sstr;
       sstr << "Error streaming on port " << udpPort;

@@ -119,7 +119,7 @@ namespace libmotioncapture {
         getString(cfg, "hostname", "localhost"),
         getInt(cfg, "port", 22222),
         getBool(cfg, "enable_objects", true),
-        getBool(cfg, "enable_pointclout", true));
+        getBool(cfg, "enable_pointcloud", true));
     }
 #endif
 #ifdef ENABLE_VRPN
