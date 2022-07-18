@@ -272,7 +272,7 @@ namespace libmotioncapture {
 					rb.y,
 					rb.z);
 
-		        Eigen::Quaternionf rotation(rb.qw, rb.qz, rb.qy, rb.qx);
+		        Eigen::Quaternionf rotation(rb.qw, rb.qx, rb.qy, rb.qz);
 
                 return RigidBody(pImpl->GetBodyNameById(bodyId), position, rotation);
 			}
