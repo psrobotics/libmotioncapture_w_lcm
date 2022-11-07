@@ -173,6 +173,8 @@ set_property(TARGET libmotioncapture PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 if (LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS)
   # Python bindings
+  find_package (Python3 COMPONENTS Interpreter Development)
+
   add_subdirectory(deps/pybind11 EXCLUDE_FROM_ALL)
   # find_package(Python COMPONENTS Interpreter Development)
   # find_package(pybind11 CONFIG)
