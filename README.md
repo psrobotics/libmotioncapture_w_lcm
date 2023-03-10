@@ -1,7 +1,7 @@
 [![CI](https://github.com/IMRCLab/libmotioncapture/actions/workflows/CI.yml/badge.svg)](https://github.com/IMRCLab/libmotioncapture/actions/workflows/CI.yml)
 
 # libmotioncapture
-Interface Abstraction for Motion Capture System APIs such as VICON, OptiTrack, Qualisys, Nokov, or VRPN.
+Interface Abstraction for Motion Capture System APIs such as VICON, OptiTrack, Qualisys, Nokov, FZMotion, or VRPN.
 
 This can be used as C++ library or Python package. For Python, use
 
@@ -26,6 +26,7 @@ By default, `libmotioncapture` supports the following hardware:
 - OptiTrack - binary parsing over network (no dependency)
 - VRPN - SDK git submodule
 - NOKOV - manually obtain SDK and copy to deps/nokov_sdk/ and copy the .so file to the /lib or /usr/lib.
+- FZMotion - no dependency
 
 CMake flags can be used to disable individual systems in `CMakeLists.txt`.
 

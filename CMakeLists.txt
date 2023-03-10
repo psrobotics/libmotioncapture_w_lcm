@@ -9,6 +9,7 @@ option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed
 option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
 option(LIBMOTIONCAPTURE_ENABLE_NOKOV "Enable Nokov" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" ON)
+option(LIBMOTIONCAPTURE_ENABLE_FZMOTION "Enable FZMOTION" ON)
 option(LIBMOTIONCAPTURE_BUILD_EXAMPLE "Enable Example application" ON)
 
 # Enable C++14
@@ -149,6 +150,14 @@ if (LIBMOTIONCAPTURE_ENABLE_VRPN)
   set(my_libraries
     ${my_libraries}
     ${VRPN_CLIENT_LIBRARY}
+  )
+endif()
+
+if (LIBMOTIONCAPTURE_ENABLE_FZMOTION)
+  add_definitions(-DENABLE_FZMOTION)
+  set(my_files
+    ${my_files}
+    src/fzmotion.cpp
   )
 endif()
 
