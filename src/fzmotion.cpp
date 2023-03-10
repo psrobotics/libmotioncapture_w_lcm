@@ -89,7 +89,11 @@ namespace libmotioncapture {
 					continue;
 				}
 				cout << "Waiting for response..." << endl;
+#ifdef _WIN32
+                Sleep(1000);
+#else
 				sleep(1);
+#endif
         	}while(bReceivedConfirmMessage == false);
         });
 
@@ -127,8 +131,12 @@ namespace libmotioncapture {
                 	continue;
                 };
                 cout << "Waiting for response..." << endl;
+#ifdef _WIN32
+                Sleep(1000);
+#else
                 sleep(1);
-        	}while(bTagListReceived == false);
+#endif
+            }while(bTagListReceived == false);
         });
 
         while(true){
