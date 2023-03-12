@@ -69,8 +69,28 @@ namespace libmotioncapture {
     rigidBodies_.clear();
     size_t count = pImpl->client.GetSubjectCount().SubjectCount;
     for (size_t i = 0; i < count; ++i) {
-      const std::string name = pImpl->client.GetSubjectName(i).SubjectName;
-      rigidBodies_.emplace(name, rigidBodyByName(name));
+      auto const name = pImpl->client.GetSubjectName(i).SubjectName;
+      auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, name);
+      auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, name);
+      if (   translation.Result == Result::Success
+          && quaternion.Result == Result::Success
+          && !translation.Occluded
+          && !quaternion.Occluded) {
+
+        Eigen::Vector3f position(
+          translation.Translation[0] / 1000.0,
+          translation.Translation[1] / 1000.0,
+          translation.Translation[2] / 1000.0);
+
+        Eigen::Quaternionf rotation(
+          quaternion.Rotation[3], // w
+          quaternion.Rotation[0], // x
+          quaternion.Rotation[1], // y
+          quaternion.Rotation[2]  // z
+          );
+
+        rigidBodies_.emplace(name, RigidBody(name, position, rotation));
+      }
     }
     return rigidBodies_;
   }
