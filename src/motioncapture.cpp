@@ -17,6 +17,9 @@
 #ifdef ENABLE_VRPN
 #include "libmotioncapture/vrpn.h"
 #endif
+#ifdef ENABLE_MOTIONANALYSIS
+#include "libmotioncapture/motionanalysis.h"
+#endif
 
 namespace libmotioncapture {
 
@@ -138,6 +141,13 @@ namespace libmotioncapture {
     else if (type == "vrpn")
     {
       mocap = new libmotioncapture::MotionCaptureVrpn(
+        getString(cfg, "hostname", "localhost"));
+    }
+#endif
+#ifdef ENABLE_MOTIONANALYSIS
+    else if (type == "motionanalysis")
+    {
+      mocap = new libmotioncapture::MotionCaptureMotionAnalysis(
         getString(cfg, "hostname", "localhost"));
     }
 #endif

@@ -10,6 +10,7 @@ option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
 option(LIBMOTIONCAPTURE_ENABLE_NOKOV "Enable Nokov" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" ON)
 option(LIBMOTIONCAPTURE_ENABLE_FZMOTION "Enable FZMOTION" ON)
+option(LIBMOTIONCAPTURE_ENABLE_MOTIONANALYSIS "Enable MotionAnalysis" OFF)
 option(LIBMOTIONCAPTURE_BUILD_EXAMPLE "Enable Example application" ON)
 
 # Enable C++14
@@ -31,6 +32,8 @@ set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/qualisys_cpp_sdk/)
 set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/NatNetSDKCrossplatform/)
 set(NOKOV_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/nokov_sdk/)
 set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vrpn/)
+set(MOTIONANALYSIS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/cortex_sdk_linux/)
+
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -161,6 +164,22 @@ if (LIBMOTIONCAPTURE_ENABLE_FZMOTION)
   )
 endif()
 
+if (LIBMOTIONCAPTURE_ENABLE_MOTIONANALYSIS)
+  add_definitions(-DENABLE_MOTIONANALYSIS)
+  add_subdirectory(deps/cortex_sdk_linux EXCLUDE_FROM_ALL)
+  set(my_include_directories
+    ${my_include_directories}
+    ${MOTIONANALYSIS_DIR}
+  )
+  set(my_files
+    ${my_files}
+    src/motionanalysis.cpp
+  )
+  set(my_libraries
+    ${my_libraries}
+    cortex_sdk pthread m
+  )
+endif()
 
 include_directories(
   ${my_include_directories}
