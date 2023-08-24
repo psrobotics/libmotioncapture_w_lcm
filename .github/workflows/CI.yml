@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-20.04
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
 
@@ -47,7 +47,7 @@ jobs:
     needs: Source
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
     
@@ -69,10 +69,10 @@ jobs:
 
     strategy:
       matrix:
-        python: [3.8, 3.9, 3.10, 3.11]
+        python: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
 
@@ -97,15 +97,15 @@ jobs:
 
     strategy:
       matrix:
-        python: [3.6, 3.7, 3.8, 3.9, 3.10, 3.11]
+        python: ['3.6', '3.7', '3.8', '3.9', '3.10', '3.11']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
 
@@ -141,9 +141,9 @@ jobs:
     steps:    
     - uses: actions/download-artifact@v2
 
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: '3.8'
 
     - name: Check match between the build version and the current git tag
       run: |
