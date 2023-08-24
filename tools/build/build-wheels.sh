@@ -22,7 +22,7 @@ else
 
     PREV_PATH=$PATH
 
-    for PYBIN in /opt/python/cp{36,37,38,39}*/bin; do
+    for PYBIN in /opt/python/cp{36,37,38,39,310,311}*/bin; do
         PATH=${PYBIN}:$PREV_PATH
         rm -rf build/
         "${PYBIN}/pip" install -U "setuptools>=42" wheel ninja "cmake>=3.12"
