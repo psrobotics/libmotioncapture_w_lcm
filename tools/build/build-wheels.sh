@@ -22,7 +22,7 @@ else
     PYBIN="/opt/python/cp${PYVERCL}-cp${PYVERCL}/bin"
     echo "Using python path $PYBIN"
 
-    yum install -y libusbx-devel
+    yum install -y boost-devel eigen3-devel
 
     cd /io
 
