@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    # Weekly build to make sure dependencies are OK
+    - cron:  '30 14 * * 3'
   workflow_dispatch:
     inputs:
       guard:
@@ -17,10 +20,10 @@ on:
 
 jobs:
   Source:
-    runs-on: ubuntu-20.04
-    
+    runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
 
@@ -29,7 +32,7 @@ jobs:
 
     - name: Generate source distribution tarball
       run: python3 setup.py sdist
-    
+
     - name: Build source distribution
       run: |
         sudo apt-get install -y libboost-system-dev libboost-thread-dev libeigen3-dev ninja-build
@@ -37,75 +40,86 @@ jobs:
         pip3 wheel dist/*.tar.gz
 
     - name: Upload Build Artifact
-      uses: actions/upload-artifact@v2.1.4
+      uses: actions/upload-artifact@v3
       with:
         name: source-build
         path: "dist/*.tar.gz"
 
   Linux:
-    runs-on: ubuntu-latest
-    needs: Source
-    
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-    
-    - name: Pull builder image
-      run: docker pull quay.io/pypa/manylinux2014_x86_64
-
-    - name: Build wheels
-      run: tools/build/build-wheels.sh
-
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v2.1.4
-      with:
-        name: linux-build
-        path: "dist/*.whl"
-  
-  MacOS:
-    runs-on: macos-10.15
+    runs-on: ubuntu-22.04
     needs: Source
 
     strategy:
       matrix:
-        python: [3.8, 3.9]
+        python: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Pull builder image
+      run: docker pull quay.io/pypa/manylinux2014_x86_64
+
+    - name: Python version
+      run: python --version
+
+    - name: Build wheels
+      run: tools/build/build-wheels.sh ${{ matrix.python }}
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-build
+        path: "dist/*.whl"
+
+  MacOS:
+    runs-on: macos-12
+    needs: Source
+
+    strategy:
+      matrix:
+        python: ['3.8', '3.9', '3.10', '3.11']
+
+    steps:
+      - uses: actions/checkout@v3
         with:
           submodules: true
 
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+
       - name: Install dependencies
         run: |
-          brew install python@${{ matrix.python }} eigen boost
-          brew link --overwrite python@${{ matrix.python }}
-          pip3 install cmake ninja wheel
-      
+          brew install eigen boost
+          pip install cmake ninja wheel
+
       - name: Build
-        run: python3 setup.py bdist_wheel
-      
+        run: python setup.py bdist_wheel
+
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v2.1.4
+        uses: actions/upload-artifact@v3
         with:
           name: macos-build
           path: "dist/*.whl"
 
   Windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: Source
 
     strategy:
       matrix:
-        python: [3.6, 3.7, 3.8, 3.9]
+        python: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
-      
+
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
 
@@ -128,28 +142,28 @@ jobs:
           CMAKE_TOOLCHAIN_FILE: "C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
       
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v2.1.4
+        uses: actions/upload-artifact@v3
         with:
           name: win-build
           path: "dist/*.whl"
-  
+
   Publish:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [Source, Linux, MacOS, Windows]
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.guard == 'do-release' }}
 
-    steps:    
-    - uses: actions/download-artifact@v2
+    steps:
+    - uses: actions/download-artifact@v3
 
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: '3.8'
 
     - name: Check match between the build version and the current git tag
       run: |
         sudo apt-get install -y jq
         pip3 install wheel-inspect
-        
+
         export TAG=$(echo ${{ github.ref }} | cut -d/ -f3)
         python3 -m wheel_inspect *-build/*.whl | jq .version | grep ^\\\"$TAG\\\"$
 
@@ -162,14 +176,13 @@ jobs:
       run: |
         pip3 install setuptools
         pip3 install twine
-        
+
         python3 -m twine check source-build/*
         python3 -m twine check linux-build/*
         python3 -m twine check macos-build/*
         python3 -m twine check win-build/*
-        
+
         python3 -m twine upload --skip-existing --repository-url ${{ github.event.inputs.repository_url }} source-build/*
         python3 -m twine upload --skip-existing --repository-url ${{ github.event.inputs.repository_url }} linux-build/*
         python3 -m twine upload --skip-existing --repository-url ${{ github.event.inputs.repository_url }} macos-build/*
         python3 -m twine upload --skip-existing --repository-url ${{ github.event.inputs.repository_url }} win-build/*
-
