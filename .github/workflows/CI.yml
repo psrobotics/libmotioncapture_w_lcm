@@ -151,10 +151,18 @@ jobs:
     # Only run publish if we have tagged the version
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     steps:
-    # download all the artifacts to the dist folder
+    # download all the artifacts
     - uses: actions/download-artifact@v3
-      with:
-        path: dist
+
+    - name: Move all files into the dist folder
+      run: |
+        mkdir dist
+        mv source-build/* dist
+        mv linux-build/* dist
+        mv macos-build/* dist
+        mv win-build/* dist
+        ls -R dist
+
     - uses: actions/setup-python@v4
       with:
         python-version: '3.8'
