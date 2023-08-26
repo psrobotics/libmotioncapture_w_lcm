@@ -149,8 +149,16 @@ jobs:
 
   Publish:
     runs-on: ubuntu-22.04
+    environment:
+      name: pypi
+      url: https://pypi.org/p/motioncapture
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     needs: [Source, Linux, MacOS, Windows]
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.guard == 'do-release' }}
+
+    # In the future we may want to switch to a basic tag check instead
+    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
 
     steps:
     - uses: actions/download-artifact@v3
@@ -170,19 +178,6 @@ jobs:
 
     - name: Publish on Pypi
       if: ${{ github.event_name == 'workflow_dispatch' }}
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        pip3 install setuptools
-        pip3 install twine
-
-        python3 -m twine check source-build/*
-        python3 -m twine check linux-build/*
-        python3 -m twine check macos-build/*
-        python3 -m twine check win-build/*
-
-        python3 -m twine upload --skip-existing --repository-url ${{ github.event.inputs.repository_url }} source-build/*
-        python3 -m twine upload --skip-existing --repository-url ${{ github.event.inputs.repository_url }} linux-build/*
-        python3 -m twine upload --skip-existing --repository-url ${{ github.event.inputs.repository_url }} macos-build/*
-        python3 -m twine upload --skip-existing --repository-url ${{ github.event.inputs.repository_url }} win-build/*
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: ${{ github.event.inputs.repository_url }}

@@ -105,7 +105,7 @@ setup(
     name="motioncapture",
     version=version,
     description="Interface for common motion capture systems",
-    long_description="",
+    long_description="Interface for common motion capture systems",
     ext_modules=[CMakeExtension("motioncapture")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
