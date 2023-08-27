@@ -176,5 +176,4 @@ jobs:
         python3 -m wheel_inspect dist/*.whl | jq .version | grep ^\\\"$TAG\\\"$
 
     - name: Publish on Pypi
-      if: ${{ github.event_name == 'workflow_dispatch' }}
       uses: pypa/gh-action-pypi-publish@release/v1
