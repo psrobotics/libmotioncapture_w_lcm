@@ -14,6 +14,31 @@ namespace libmotioncapture {
   constexpr int NAT_REQUEST_MODELDEF  = 4;
   constexpr int NAT_MODELDEF          = 5;
 
+  /**
+   * \brief Unpack number of bytes of data for a given data type. 
+   * Useful if you want to skip this type of data. 
+   * \param ptr - input data stream pointer
+   * \param major - NatNet major version
+   * \param minor - NatNet minor version
+   * \return - pointer after decoded object
+  */
+  char* UnpackDataSize(char* ptr, int major, int minor, int& nBytes, bool skip = false )
+  {
+      nBytes = 0;
+
+      // size of all data for this data type (in bytes);
+      if (((major == 4) && (minor > 0)) || (major > 4))
+      {
+          memcpy(&nBytes, ptr, 4); ptr += 4;
+          // printf("Byte Count: %d\n", nBytes);
+          if (skip)
+          {
+              ptr += nBytes;
+          }
+      }
+      return ptr;
+  }
+
   class MotionCaptureOptitrackImpl{
   public:
     MotionCaptureOptitrackImpl()
@@ -368,6 +393,9 @@ namespace libmotioncapture {
         int nMarkerSets = 0; memcpy(&nMarkerSets, ptr, 4); ptr += 4;
         // printf("Marker Set Count : %d\n", nMarkerSets);
 
+        int nBytes=0;
+        ptr = UnpackDataSize(ptr, major, minor,nBytes);
+
         // Loop through number of marker sets and get name and data
         for (int i=0; i < nMarkerSets; i++)
         {
@@ -379,6 +407,7 @@ namespace libmotioncapture {
         // Loop through unlabeled markers
         // OtherMarker list is Deprecated
         int nOtherMarkers = 0; memcpy(&nOtherMarkers, ptr, 4); ptr += 4;
+        ptr = UnpackDataSize(ptr, major, minor,nBytes);
         pImpl->markers.resize(nOtherMarkers);
         for (int j = 0; j < nOtherMarkers; j++)
         {
@@ -389,6 +418,7 @@ namespace libmotioncapture {
 
         // Loop through rigidbodies
         int nRigidBodies = 0; memcpy(&nRigidBodies, ptr, 4); ptr += 4;
+        ptr = UnpackDataSize(ptr, major, minor,nBytes);
         pImpl->rigidBodies.resize(nRigidBodies);
         // printf("Rigid Body Count : %d\n", nRigidBodies);
         for (int j=0; j < nRigidBodies; j++)
@@ -425,6 +455,7 @@ namespace libmotioncapture {
         {
           int nSkeletons = 0; memcpy(&nSkeletons, ptr, 4); ptr += 4;
           // printf("Skeleton Count : %d\n", nSkeletons);
+          ptr = UnpackDataSize(ptr, major, minor,nBytes);
 
           // Loop through skeletons
           for (int j=0; j < nSkeletons; j++)
@@ -459,6 +490,18 @@ namespace libmotioncapture {
             } // next rigid body
           } // next skeleton
         }
+
+        // Assets ( Motive 3.1 / NatNet 4.1 and greater)
+        if (((major == 4) && (minor > 0)) || (major > 4))
+        {
+            int nAssets = 0;
+            memcpy(&nAssets, ptr, 4); ptr += 4;
+            // printf("Asset Count : %d\n", nAssets);
+
+            int nBytes=0;
+            ptr = UnpackDataSize(ptr, major, minor,nBytes);
+            ptr += nBytes;
+        }
         
         // labeled markers (NatNet version 2.3 and later)
         // labeled markers - this includes all markers: Active, Passive, and 'unlabeled' (markers with no asset but a PointCloud ID)
@@ -466,6 +509,7 @@ namespace libmotioncapture {
         {
           int nLabeledMarkers = 0;
           memcpy(&nLabeledMarkers, ptr, 4); ptr += 4;
+          ptr = UnpackDataSize(ptr, major, minor,nBytes);
           pImpl->markers.resize(nOtherMarkers + nLabeledMarkers);
           // printf("Labeled Marker Count : %d\n", nLabeledMarkers);
 
@@ -527,6 +571,7 @@ namespace libmotioncapture {
         {
           int nForcePlates;
           memcpy(&nForcePlates, ptr, 4); ptr += 4;
+          ptr = UnpackDataSize(ptr, major, minor,nBytes);
           for (int iForcePlate = 0; iForcePlate < nForcePlates; iForcePlate++)
           {
             // ID
@@ -558,6 +603,7 @@ namespace libmotioncapture {
         {
           int nDevices;
           memcpy(&nDevices, ptr, 4); ptr += 4;
+          ptr = UnpackDataSize(ptr, major, minor,nBytes);
           for (int iDevice = 0; iDevice < nDevices; iDevice++)
           {
             // ID
