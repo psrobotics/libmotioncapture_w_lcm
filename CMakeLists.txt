@@ -5,7 +5,7 @@ project(libmotioncapture)
 option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
 option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" ON)
 option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" ON)
-option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" ON)
 option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
 option(LIBMOTIONCAPTURE_ENABLE_NOKOV "Enable Nokov" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" ON)
@@ -54,6 +54,8 @@ set(my_files
 )
 
 if (LIBMOTIONCAPTURE_ENABLE_VICON)
+  message("including vicon")
+
   add_definitions(-DENABLE_VICON)
   add_subdirectory(deps/vicon-datastream-sdk EXCLUDE_FROM_ALL)
   set(my_include_directories
@@ -71,6 +73,8 @@ if (LIBMOTIONCAPTURE_ENABLE_VICON)
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
+  message("including optitrack")
+
   add_definitions(-DENABLE_OPTITRACK)
   set(my_include_directories
     ${my_include_directories}
@@ -82,26 +86,34 @@ if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE)
-  add_definitions(-DENABLE_OPTITRACK_CLOSED_SOURCE)
-  add_subdirectory(deps/NatNetSDKCrossplatform EXCLUDE_FROM_ALL)
-  set(my_include_directories
-    ${my_include_directories}
-    ${NATNET_SDK_DIR}/include
-  )
-  set(my_files
-    ${my_files}
-    src/optitrack_closed_source.cpp
-  )
-  set(my_link_directories
-    ${NATNET_SDK_DIR}/lib/ubuntu
-  )
-  set(my_libraries
-    ${my_libraries}
-    NatNet
-  )
+  if ((CMAKE_SYSTEM_NAME STREQUAL "Linux") AND (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"))
+    message("Including optitrack_closed_source")
+
+    add_definitions(-DENABLE_OPTITRACK_CLOSED_SOURCE)
+    add_subdirectory(deps/NatNetSDKCrossplatform EXCLUDE_FROM_ALL)
+    set(my_include_directories
+      ${my_include_directories}
+      ${NATNET_SDK_DIR}/include
+    )
+    set(my_files
+      ${my_files}
+      src/optitrack_closed_source.cpp
+    )
+    set(my_link_directories
+      ${NATNET_SDK_DIR}/lib/ubuntu
+    )
+    set(my_libraries
+      ${my_libraries}
+      NatNet
+    )
+  else()
+    message(WARNING "Can not include optitrack_closed_source due to missing SDK. (${CMAKE_SYSTEM_NAME}, ${CMAKE_SYSTEM_PROCESSOR})")
+  endif()
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_QUALISYS)
+  message("including qualisys")
+
   add_definitions(-DENABLE_QUALISYS)
   add_subdirectory(deps/qualisys_cpp_sdk EXCLUDE_FROM_ALL)
   set(my_include_directories
@@ -119,6 +131,8 @@ if (LIBMOTIONCAPTURE_ENABLE_QUALISYS)
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_NOKOV)
+  message("including nokov")
+
   add_definitions(-DENABLE_NOKOV)
   set(my_include_directories
     ${my_include_directories}
@@ -139,6 +153,8 @@ if (LIBMOTIONCAPTURE_ENABLE_NOKOV)
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_VRPN)
+  message("including vrpn")
+
   add_definitions(-DENABLE_VRPN)
   option(VRPN_BUILD_CLIENT_LIBRARY "" ON)
   add_subdirectory(deps/vrpn EXCLUDE_FROM_ALL)
@@ -157,6 +173,8 @@ if (LIBMOTIONCAPTURE_ENABLE_VRPN)
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_FZMOTION)
+  message("including fzmotion")
+
   add_definitions(-DENABLE_FZMOTION)
   set(my_files
     ${my_files}
@@ -165,6 +183,8 @@ if (LIBMOTIONCAPTURE_ENABLE_FZMOTION)
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_MOTIONANALYSIS)
+  message("including motionanalysis")
+
   add_definitions(-DENABLE_MOTIONANALYSIS)
   add_subdirectory(deps/cortex_sdk_linux EXCLUDE_FROM_ALL)
   set(my_include_directories
