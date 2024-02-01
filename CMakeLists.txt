@@ -50,7 +50,7 @@ set(my_include_directories
 set(my_link_directories)
 set(my_files
   src/motioncapture.cpp
-  src/testmocap.cpp
+  src/mock.cpp
 )
 
 if (LIBMOTIONCAPTURE_ENABLE_VICON)

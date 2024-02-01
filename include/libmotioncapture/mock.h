@@ -2,19 +2,23 @@
 #include "libmotioncapture/motioncapture.h"
 
 namespace libmotioncapture {
-  class MotionCaptureTestImpl;
+  class MotionCaptureMockImpl;
 
-  class MotionCaptureTest : public MotionCapture{
+  class MotionCaptureMock : public MotionCapture{
   public:
-    MotionCaptureTest(
+    MotionCaptureMock(
       float dt,
-      const std::vector<RigidBody>& objects);//,
-      // const pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud);
+      const std::vector<RigidBody>& objects,
+      const PointCloud& pointCloud);
 
-    virtual ~MotionCaptureTest();
+    virtual ~MotionCaptureMock();
 
     // implementations for MotionCapture interface
     virtual void waitForNextFrame();
+
+    const std::map<std::string, RigidBody>& rigidBodies() const;
+
+    const PointCloud& pointCloud() const;
 
     virtual bool supportsRigidBodyTracking() const
     {
@@ -27,7 +31,7 @@ namespace libmotioncapture {
     }
 
   private:
-    MotionCaptureTestImpl * pImpl;
+    MotionCaptureMockImpl * pImpl;
   };
 }
 

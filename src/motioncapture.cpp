@@ -1,4 +1,5 @@
 #include "libmotioncapture/motioncapture.h"
+#include "libmotioncapture/mock.h"
 #ifdef ENABLE_VICON
 #include "libmotioncapture/vicon.h"
 #endif
@@ -91,6 +92,66 @@ namespace libmotioncapture {
 
     if (false)
     {
+    }
+    else if (type == "mock")
+    {
+
+      // read rigid bodies from string
+      // e.g., "rb1(x,y,z,qw,qx,qy,qz);rb2(x,y,z,qw,qx,qy,qz)"
+
+      std::vector<libmotioncapture::RigidBody> rigidBodies;
+      auto rbstring = getString(cfg, "rigid_bodies", "");
+      size_t pos1 = 0, pos2 = 0;
+      while (pos1 <= rbstring.size()) {
+        pos2 = rbstring.find(';', pos1);
+        if (pos2 == std::string::npos) {
+          pos2 = rbstring.size();
+        }
+        auto rbstr = rbstring.substr(pos1, pos2-pos1);
+        float x, y, z, qw, qx, qy, qz;
+        char name[100];
+        int scanned = std::sscanf(rbstr.c_str(), "%[^(](%f,%f,%f,%f,%f,%f,%f)", name, &x, &y, &z, &qw, &qx, &qy, &qz);
+        if (scanned == 8) {
+          Eigen::Vector3f pos(x,y,z);
+          Eigen::Quaternionf rot(qw, qx, qy, qz);
+          rigidBodies.emplace_back(libmotioncapture::RigidBody(std::string(name), pos, rot));
+        } else {
+          break;
+        }
+        pos1 = pos2 + 1;
+      }
+
+      // read pointcloud from string
+      // e.g., "x,y,z;x,y,z"
+      
+      PointCloud pc;
+      auto pcstring = getString(cfg, "pointcloud", "");
+      pos1 = 0, pos2 = 0;
+      while (pos1 <= pcstring.size()) {
+        pos2 = pcstring.find(';', pos1);
+        if (pos2 == std::string::npos) {
+          pos2 = pcstring.size();
+        }
+        auto pcstr = pcstring.substr(pos1, pos2-pos1);
+        float x, y, z;
+        int scanned = std::sscanf(pcstr.c_str(), "%f,%f,%f", &x, &y, &z);
+        if (scanned == 3) {
+          pc.conservativeResize(pc.rows()+1, Eigen::NoChange);
+          pc.row(pc.rows()-1) << x, y, z;
+        } else {
+          break;
+        }
+        pos1 = pos2 + 1;
+      }
+      // pc.resize(4, Eigen::NoChange);
+      // pc.row(0) << 0, 0, 0;
+      // pc.row(1) << 0, 0.5, 0;
+      // pc.row(2) << 0, -0.5, 0;
+      // pc.row(3) << 0.5, 0, 0;
+
+      mocap = new libmotioncapture::MotionCaptureMock(
+        1.0f / getInt(cfg, "frequency", 100),
+        rigidBodies, pc);
     }
 #ifdef ENABLE_VICON
     else if (type == "vicon")
