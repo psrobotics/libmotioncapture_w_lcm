@@ -45,6 +45,7 @@ git submodule update
 mkdir build
 cd build
 cmake ..
+make
 ```
 
 An example application is in `examples/main.cpp`. Run it using

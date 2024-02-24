@@ -7,9 +7,9 @@ on:
       - '*'
   pull_request:
     branches: [ main ]
-  schedule:
-    # Weekly build to make sure dependencies are OK
-    - cron:  '30 14 * * 3'
+#  schedule:
+#    # Weekly build to make sure dependencies are OK
+#    - cron:  '30 14 * * 3'
 
 jobs:
   Source:
