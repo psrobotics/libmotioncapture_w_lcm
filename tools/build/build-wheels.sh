@@ -14,7 +14,7 @@ fi
 if [ ! -d /opt/python ]
 then
     # We are not in the image, start the image with the build script
-    $DOCKER run --rm -v $(realpath $(dirname $0)/../..):/io quay.io/pypa/manylinux2014_x86_64 /io/tools/build/build-wheels.sh $PYVERSION
+    $DOCKER run --rm -v $(realpath $(dirname $0)/../..):/io quay.io/pypa/manylinux_2_28_x86_64 /io/tools/build/build-wheels.sh $PYVERSION
 else
     # We are in the image, building!
     PYVERCL=${PYVERSION//./}
