@@ -25,6 +25,9 @@ add_definitions(
   -D_BUILD_STATIC_LIB
 )
 
+# lcm
+find_package(lcm REQUIRED)
+
 find_package(Eigen3 REQUIRED)
 
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vicon-datastream-sdk/)
@@ -42,10 +45,13 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 ###########
 
 ## Additional include folders
+# lcm
 set(my_include_directories
   include
+  examples/lcm_type/exlcm # type hpp for lcm
   ${Boost_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
+  ${LCM_USE_FILE}
 )
 set(my_link_directories)
 set(my_files
@@ -239,10 +245,12 @@ endif()
 
 if (LIBMOTIONCAPTURE_BUILD_EXAMPLE)
   add_executable(motioncapture_example
-    examples/main.cpp
+    examples/vicon_sender.cpp
   )
+  # add lcm
   target_link_libraries(motioncapture_example
     libmotioncapture
+    ${LCM_NAMESPACE}lcm
   )
 
 endif()
