@@ -43,7 +43,7 @@ int main(int argc, char **argv)
   exlcm::motion_t motion_t_msg;
 
   // define the rigid body name we want to track
-  std::string rb_name = "QUAD_RB_GROUP_1";
+  std::string rb_name = "QUAD_RB_1";
   motion_t_msg.rb_name = rb_name;
 
 
@@ -53,13 +53,16 @@ int main(int argc, char **argv)
     mocap->waitForNextFrame();
 
     std::cout << "frame " << frameId << std::endl;
+    motion_t_msg.timestamp = frameId;
 
+    // timestep
     if (mocap->supportsTimeStamp()) 
     {
       std::cout << "  timestamp: " << mocap->timeStamp() << " us" << std::endl;
-      motion_t_msg.timestamp = mocap->timeStamp();
+
     }
 
+    // latency
     if (mocap->supportsLatencyEstimate()) 
     {
       std::cout << "  latency: " << std::endl;
@@ -69,16 +72,7 @@ int main(int argc, char **argv)
       }
     }
 
-    if (mocap->supportsPointCloud()) 
-    {
-      std::cout << "  pointcloud:" << std::endl;
-      auto pointcloud = mocap->pointCloud();
-      for (size_t i = 0; i < pointcloud.rows(); ++i) {
-        const auto& point = pointcloud.row(i);
-        std::cout << "    \"" << i << "\": [" << point(0) << "," << point(1) << "," << point(2) << "]" << std::endl;
-      }
-    }
-
+    // rigidbody_tracking
     if (mocap->supportsRigidBodyTracking()) 
     {
       auto rigidBodies = mocap->rigidBodies();
@@ -98,9 +92,12 @@ int main(int argc, char **argv)
           std::cout << "       position: [" << position(0) << ", " << position(1) << ", " << position(2) << "]" << std::endl;
           std::cout << "       rotation: [" << rotation.w() << ", " << rotation.vec()(0) << ", "
                                               << rotation.vec()(1) << ", " << rotation.vec()(2) << "]" << std::endl;
+
+          // copy in position data
           for(int s=0;s<3;s++)
             motion_t_msg.position[s] = position(s);
 
+          // copy in orientation data
           motion_t_msg.orientation[0] = rotation.w();
           motion_t_msg.orientation[1] = rotation.vec()(0);
           motion_t_msg.orientation[2] = rotation.vec()(1);
@@ -115,9 +112,20 @@ int main(int argc, char **argv)
       }
     }
 
+    // raw point cloud
+    if (mocap->supportsPointCloud()) 
+    {
+      std::cout << "  pointcloud:" << std::endl;
+      auto pointcloud = mocap->pointCloud();
+      for (size_t i = 0; i < pointcloud.rows(); ++i) {
+        const auto& point = pointcloud.row(i);
+        std::cout << "    \"" << i << "\": [" << point(0) << "," << point(1) << "," << point(2) << "]" << std::endl;
+      }
+    }
+
     // lcm send info
     lcm.publish("VICON_LCM", &motion_t_msg);
-    std::cout << "lcm data sent" << std::endl;
+    std::cout << "lcm data package sent" << std::endl;
 
   }
 
