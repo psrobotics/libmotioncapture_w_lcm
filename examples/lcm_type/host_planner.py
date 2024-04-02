@@ -42,7 +42,7 @@ def quaternion_to_rpy(quaternion):
 
     return roll_x, pitch_y, yaw_z
     
-# lcm handle function
+# lcm handle function, update state variables, get the log here
 def my_handler(channel, data):
     msg = motion_t.decode(data)
     print("   Received message on channel \"%s\"" % channel)
@@ -55,13 +55,20 @@ def my_handler(channel, data):
     print("")
 
     [roll, pitch, yaw] = quaternion_to_rpy(msg.orientation)
-    print(roll)
-    print(pitch)
-    print(yaw)
-    print("\n")
+    print("roll - {0:.5f}, pitch - {0:.5f}, yaw - {0:.5f} \n".format(roll, pitch, yaw))
 
     # we use global variable here
-    rbt_state[0]
+    rbt_state[0] = msg.position[0] + state_offset[0] # x
+    rbt_state[1] = msg.position[1] + state_offset[1] # y
+    rbt_state[2] = yaw + state_offset[2] # yaw
+
+    # update global variables for logging, some overlaid with offset
+    global_xyz[0] = rbt_state[0]
+    global_xyz[1] = rbt_state[1]
+    global_xyz[2] = msg.position[2]
+    global_rpy[0] = roll
+    global_rpy[1] = pitch
+    global_rpy[2] = rbt_state[2]
 
 
 # setup lcm
@@ -92,11 +99,15 @@ cmd_stance_length = 0.40 # fpp len
 # mat states
 rbt_state = np.zeros(3)
 # state offset, x y yaw
-state_offset = np.array([-0.5, 0.0, 0.0])
+state_offset = np.array([3.80, -4.00, -1.98])
 # state index
 state_index_f = np.array([0, 0, 0])
 # target set thres, set to 0.7
 tar_dist_thes = 0.2
+
+# xyz, rpy
+global_xyz = np.zeros(3)
+global_rpy = np.zeros(3)
 
 mode_r = 1
 ctr_r = 0.0
@@ -343,6 +354,13 @@ try:
 
         # ~200hz in loop
         #time.sleep(0.05)
+            
+        # save to csv
+        csv_row = "{0:d},{1:.6f},{2:.6f},{3:.6f},{4:.6f},{5:.6f},{6:.6f},{7:.6f}".format(opti_mode,cmd_yaw_vel,
+                                                                                         global_xyz[0],global_xyz[1],global_xyz[2],
+                                                                                         global_rpy[0],global_rpy[1],global_rpy[2])
+        lgr.info(csv_row)
+
         print('\n')
 
 
