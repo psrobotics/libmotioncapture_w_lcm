@@ -20,6 +20,28 @@ def send_udp_message(message, ip, port):
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
         sock.sendto(message, (ip, port))
 
+
+# quaternion to rpy
+def quaternion_to_rpy(quaternion):
+    # Normalize the quaternion to ensure unit length
+    quaternion /= np.linalg.norm(quaternion)
+    # Extract individual components
+    w, x, y, z = quaternion
+    #w, y, x, z = quaternion
+    # Compute roll (x-axis rotation)
+    roll_x = np.arctan2(2 * (w * x + y * z), 1 - 2 * (x**2 + y**2))
+    # Compute pitch (y-axis rotation)
+    sin_pitch = 2 * (w * y - z * x)
+    # Ensure sin_pitch stays within valid range to avoid numerical issues
+    sin_pitch = np.clip(sin_pitch, -1.0, 1.0)
+    pitch_y = np.arcsin(sin_pitch)
+    # Compute yaw (z-axis rotation)
+    yaw_z = np.arctan2(2 * (w * z + x * y), 1 - 2 * (y**2 + z**2))
+    # Convert yaw to the range of -π to π
+    yaw_z = np.arctan2(np.sin(yaw_z), np.cos(yaw_z))
+
+    return roll_x, pitch_y, yaw_z
+    
 # lcm handle function
 def my_handler(channel, data):
     msg = motion_t.decode(data)
@@ -31,6 +53,15 @@ def my_handler(channel, data):
     print("   rb_name        = '%s'" % msg.rb_name)
     print("   enabled     = %s" % str(msg.enabled))
     print("")
+
+    [roll, pitch, yaw] = quaternion_to_rpy(msg.orientation)
+    print(roll)
+    print(pitch)
+    print(yaw)
+    print("\n")
+
+    # we use global variable here
+    rbt_state[0]
 
 
 # setup lcm
@@ -132,7 +163,7 @@ with h5py.File(mat_file_path, 'r') as file:
 try:
     while True:
         # check lcm call back in loop
-        #lc.handle()
+        lc.handle()
 
         # update state with state estimation value
         rbt_state[0] = 1.0
@@ -309,6 +340,10 @@ try:
             # set command velocity to 0 
             cmd_x_vel = 0.0
             cmd_yaw_vel = 0.0
+
+        # ~200hz in loop
+        #time.sleep(0.05)
+        print('\n')
 
 
 
